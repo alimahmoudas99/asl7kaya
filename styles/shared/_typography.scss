@@ -1,0 +1,64 @@
+@use 'variables' as *;
+
+// ─── Article Content (for video detail pages) ────────────
+.article-content {
+    h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $text-white;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid $border-light;
+    }
+
+    h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: $text-light;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    p {
+        color: $text-body;
+        line-height: 1.9;
+        margin-bottom: 1.25rem;
+        font-size: 1.05rem;
+    }
+
+    ul,
+    ol {
+        color: $text-body;
+        padding-right: 1.5rem;
+        margin-bottom: 1.25rem;
+    }
+
+    li {
+        margin-bottom: 0.5rem;
+        line-height: 1.8;
+    }
+
+    blockquote {
+        border-right: 4px solid $primary-600;
+        padding: 1rem 1.5rem;
+        margin: 1.5rem 0;
+        background: rgba($primary-600, 0.05);
+        border-radius: 0 $radius-sm $radius-sm 0;
+        color: $text-muted;
+        font-style: italic;
+    }
+
+    strong {
+        color: $dark-100;
+        font-weight: 600;
+    }
+}
+
+// ─── Gradient Text ───────────────────────────────────────
+.gradient-text {
+    background: $gradient-primary;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}

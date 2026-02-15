@@ -1,0 +1,138 @@
+@use '../shared/variables' as *;
+@use '../shared/mixins' as *;
+
+.footer {
+    position: relative;
+    background: $dark-950;
+    border-top: 1px solid $border-subtle;
+
+    &__gradient-line {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba($primary-600, 0.5), transparent);
+    }
+
+    &__container {
+        @include container;
+        padding-block: 4rem;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 3rem;
+
+        @include md {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    // ─── Brand ─────────────────────────────────────────
+    &__brand {
+        &-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+
+            &-icon {
+                width: 2.5rem;
+                height: 2.5rem;
+                border-radius: $radius-xl;
+                background: linear-gradient(to bottom right, $primary-600, $primary-800);
+                @include flex-center;
+            }
+
+            &-text {
+                font-size: 1.25rem;
+                font-weight: 700;
+                color: $text-white;
+            }
+        }
+
+        &-desc {
+            color: $text-body;
+            font-size: 0.875rem;
+            line-height: 1.7;
+        }
+    }
+
+    // ─── Quick Links ───────────────────────────────────
+    &__section-title {
+        color: $text-white;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        font-size: 1.125rem;
+    }
+
+    &__links {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    &__link {
+        color: $text-body;
+        font-size: 0.875rem;
+        text-decoration: none;
+        transition: color $transition-base;
+
+        &:hover {
+            color: $text-primary;
+        }
+    }
+
+    // ─── Social ────────────────────────────────────────
+    &__social {
+        display: flex;
+        gap: 1rem;
+    }
+
+    &__social-link {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: $radius-lg;
+        background: $bg-input;
+        @include flex-center;
+        color: $text-body;
+        text-decoration: none;
+        transition: all $transition-base;
+
+        &--youtube:hover {
+            background: rgba($primary-600, 0.2);
+            color: $text-primary;
+        }
+
+        &--facebook:hover {
+            background: rgba(37, 99, 235, 0.2);
+            color: #60a5fa;
+        }
+
+        &--twitter:hover {
+            background: rgba(14, 165, 233, 0.2);
+            color: #38bdf8;
+        }
+
+        &--instagram:hover {
+            background: rgba(219, 39, 119, 0.2);
+            color: #f472b6;
+        }
+    }
+
+    // ─── Bottom Bar ────────────────────────────────────
+    &__bottom {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid $border-subtle;
+        text-align: center;
+    }
+
+    &__copyright {
+        color: $text-subtle;
+        font-size: 0.875rem;
+    }
+}

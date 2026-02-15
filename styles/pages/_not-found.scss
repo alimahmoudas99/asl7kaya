@@ -1,0 +1,41 @@
+@use '../shared/variables' as *;
+@use '../shared/mixins' as *;
+
+.not-found {
+    min-height: 100vh;
+    @include flex-center;
+    background: $dark-950;
+    padding: 1rem;
+    text-align: center;
+
+    &__code {
+        font-size: 6rem;
+        font-weight: 900;
+        background: $gradient-primary;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+    }
+
+    &__title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $text-white;
+        margin-bottom: 0.5rem;
+    }
+
+    &__desc {
+        color: $text-subtle;
+        margin-bottom: 2rem;
+    }
+
+    &__btn {
+        @include btn-primary;
+        background: $primary-600;
+
+        &:hover {
+            background: $primary-500;
+        }
+    }
+}

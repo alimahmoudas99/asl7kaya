@@ -1,0 +1,23 @@
+// ─── Shared ──────────────────────────────────────────────
+@use 'shared/variables';
+@use 'shared/mixins';
+@use 'shared/base';
+@use 'shared/animations';
+@use 'shared/typography';
+
+// ─── Components ──────────────────────────────────────────
+@use 'components/navbar';
+@use 'components/footer';
+@use 'components/video-card';
+@use 'components/video-player';
+@use 'components/search-bar';
+
+// ─── Pages ───────────────────────────────────────────────
+@use 'pages/home';
+@use 'pages/about';
+@use 'pages/contact';
+@use 'pages/video-detail';
+@use 'pages/category';
+@use 'pages/login';
+@use 'pages/dashboard';
+@use 'pages/not-found';

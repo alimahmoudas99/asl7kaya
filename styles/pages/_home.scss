@@ -1,0 +1,350 @@
+@use '../shared/variables' as *;
+@use '../shared/mixins' as *;
+
+.home {
+    background: $dark-950;
+    overflow-x: hidden;
+
+    // ─── Hero Section ──────────────────────────────────
+    &__hero {
+        position: relative;
+        min-height: 100vh; // Restore min-h-screen
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-top: $navbar-height;
+        text-align: center;
+        overflow: hidden;
+
+        // Background Effects (Restoring specific Tailwind look)
+        &-bg {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 40rem;
+            background: radial-gradient(circle at top, rgba($primary-900, 0.2), transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        &-orbs {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        &-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+
+            &--1 {
+                // Red glow
+                top: 20%;
+                right: 10%;
+                width: 20rem;
+                height: 20rem;
+                background: rgba($primary-600, 0.15); // Increased opacity slightly
+                animation: pulse 4s infinite alternate;
+            }
+
+            &--2 {
+                // Gray/Dark glow
+                bottom: 10%;
+                left: 10%;
+                width: 24rem;
+                height: 24rem;
+                background: rgba($dark-700, 0.2);
+            }
+        }
+    }
+
+    &__hero-content {
+        position: relative;
+        z-index: 10;
+        max-width: 64rem;
+        padding-inline: 1.5rem;
+    }
+
+    &__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: rgba($primary-600, 0.1);
+        border: 1px solid rgba($primary-600, 0.2);
+        border-radius: 9999px;
+        color: $primary-400;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
+
+    &__badge-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: $primary-500;
+        box-shadow: 0 0 8px $primary-500;
+    }
+
+    &__heading {
+        font-size: 3.5rem; // Bigger like before
+        line-height: 1.1;
+        font-weight: 900;
+        color: $text-white;
+        margin-bottom: 1.5rem;
+
+        @include md {
+            font-size: 5rem;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, $text-white 30%, $primary-500 100%); // Subtle gradient
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    }
+
+    &__subheading {
+        font-size: 1.25rem;
+        color: $dark-300;
+        max-width: 42rem;
+        margin-inline: auto;
+        margin-bottom: 2.5rem;
+        line-height: 1.8;
+
+        @include md {
+            font-size: 1.5rem;
+        }
+    }
+
+    &__cta-group {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+        justify-content: center;
+
+        @include sm {
+            flex-direction: row;
+        }
+    }
+
+    &__cta-primary {
+        @include btn-primary;
+        padding: 1rem 2.5rem;
+        font-size: 1.125rem;
+        border-radius: 1rem;
+        text-decoration: none;
+    }
+
+    &__cta-secondary {
+        @include btn-ghost;
+        padding: 1rem 2.5rem;
+        font-size: 1.125rem;
+        border-radius: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+          text-decoration: none;
+    }
+
+    &__empty {
+        text-align: center;
+        padding: 5rem 0;
+
+        &-icon {
+            width: 5rem;
+            height: 5rem;
+            border-radius: 50%;
+            background: $bg-input;
+            @include flex-center;
+            margin: 0 auto 1rem;
+            color: $text-faint;
+        }
+
+        &-text {
+            color: $text-subtle;
+            font-size: 1.125rem;
+        }
+    }
+
+    // ─── Stats ─────────────────────────────────────────
+    &__stats {
+        margin-top: 5rem;
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 1.5rem;
+        backdrop-filter: blur(10px);
+    }
+
+    &__stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: $text-white;
+    }
+
+    &__stat-label {
+        font-size: 0.875rem;
+        color: $dark-400;
+    }
+
+    // ─── Scroll Down ───────────────────────────────────
+    &__scroll {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        animation: bounce 2s infinite;
+        color: $dark-500;
+    }
+
+    // ─── Categories ────────────────────────────────────
+    &__categories {
+        padding: 3rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    &__categories-grid {
+        @include container;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    &__category-pill {
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        background: $dark-900;
+        border: 1px solid $border-subtle;
+        color: $text-muted;
+        font-weight: 500;
+        transition: all 0.2s;
+        text-decoration: none;
+
+        &:hover {
+            background: $dark-800;
+            color: $text-white;
+            border-color: $primary-900;
+        }
+    }
+
+    // ─── Latest Videos ─────────────────────────────────
+    &__latest {
+        padding-block: 6rem;
+        scroll-margin-top: 5rem;
+    }
+
+    &__latest-header {
+        text-align: center;
+        margin-bottom: 4rem;
+
+        h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: $text-white;
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    &__latest-divider {
+        width: 6rem;
+        height: 4px;
+        background: $primary-600;
+        margin: 0 auto;
+        border-radius: 2px;
+    }
+
+    &__videos-grid {
+        @include container;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem; // Wider gap like original
+
+        @include md {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @include lg {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    // ─── YouTube CTA ───────────────────────────────────
+    &__yt-cta {
+        padding-block: 6rem;
+    }
+
+    &__yt-cta-box {
+        @include container;
+        max-width: 64rem;
+        background: linear-gradient(to right, $dark-900, $dark-950);
+        border: 1px solid $border-subtle;
+        border-radius: 2rem;
+        padding: 4rem 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    &__yt-cta-radial {
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 100%;
+        height: 200%;
+        background: radial-gradient(circle, rgba($primary-600, 0.1) 0%, transparent 60%);
+        pointer-events: none;
+    }
+
+    &__yt-cta-content {
+        position: relative;
+        z-index: 10;
+    }
+
+    &__yt-cta-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: $text-white;
+        margin-bottom: 1rem;
+    }
+
+    &__yt-cta-desc {
+        font-size: 1.125rem;
+        color: $dark-300;
+        margin-bottom: 2.5rem;
+        max-width: 38rem;
+        margin-inline: auto;
+    }
+
+    &__yt-cta-btn {
+        @include btn-primary;
+        background: #FF0000; // YouTube Red
+        padding: 1rem 3rem;
+        font-size: 1.125rem;
+        border-radius: 1rem;
+        width: max-content;
+        display: flex;
+        flex-direction: row;
+        margin: 0 auto;
+        text-decoration: none;
+
+        svg {
+            width: 2rem;
+            height: 2rem;
+            margin-inline-end: 0.5rem;
+        }
+
+        &:hover {
+            background: #cc0000;
+        }
+    }
+}

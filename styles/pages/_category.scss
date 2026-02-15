@@ -1,0 +1,79 @@
+@use '../shared/variables' as *;
+@use '../shared/mixins' as *;
+
+.category-page {
+    @include page-wrapper;
+
+    &__container {
+        @include container;
+    }
+
+    &__header {
+        @include section-header;
+        margin-bottom: 3rem;
+    }
+
+    &__badge {
+        @include badge-primary;
+        margin-bottom: 1.5rem;
+    }
+
+    &__title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: $text-white;
+        margin-bottom: 1rem;
+
+        @include md {
+            font-size: 3rem;
+        }
+    }
+
+    &__description {
+        font-size: 1.125rem;
+        color: $text-body;
+        max-width: 42rem;
+        margin-inline: auto;
+        line-height: 1.7;
+    }
+
+    &__count {
+        margin-top: 1rem;
+        color: $text-subtle;
+        font-size: 0.875rem;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+
+        @include md {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @include lg {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    &__empty {
+        text-align: center;
+        padding: 5rem 0;
+
+        &-icon {
+            width: 5rem;
+            height: 5rem;
+            border-radius: 50%;
+            background: $bg-input;
+            @include flex-center;
+            margin: 0 auto 1rem;
+            color: $text-faint;
+        }
+
+        &-text {
+            color: $text-subtle;
+            font-size: 1.125rem;
+        }
+    }
+}

@@ -1,0 +1,131 @@
+@use '../shared/variables' as *;
+@use '../shared/mixins' as *;
+
+.contact {
+    @include page-wrapper;
+
+    &__container {
+        max-width: $container-sm;
+        margin-inline: auto;
+    }
+
+    &__header {
+        @include section-header;
+
+        &-desc {
+            color: $text-body;
+            font-size: 1.125rem;
+        }
+    }
+
+    &__divider {
+        @include divider-line;
+        margin-top: 1.5rem;
+    }
+
+    // ─── Messages ──────────────────────────────────────
+    &__success {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        border-radius: $radius-xl;
+        background: rgba(22, 163, 74, 0.1);
+        border: 1px solid rgba(22, 163, 74, 0.2);
+        color: #4ade80;
+        text-align: center;
+    }
+
+    &__error {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        border-radius: $radius-xl;
+        background: rgba($primary-600, 0.1);
+        border: 1px solid $border-primary-light;
+        color: $text-primary;
+        text-align: center;
+    }
+
+    // ─── Form ──────────────────────────────────────────
+    &__form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    &__form-card {
+        @include card(false);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    &__field {
+        &-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: $text-muted;
+            margin-bottom: 0.5rem;
+        }
+
+        &-input {
+            @include input-base;
+        }
+
+        &-textarea {
+            @include input-base;
+            resize: none;
+        }
+
+        &-error {
+            margin-top: 0.375rem;
+            color: $text-primary;
+            font-size: 0.875rem;
+        }
+    }
+
+    &__submit-btn {
+        @include btn-primary;
+        width: 100%;
+    }
+
+    // ─── Contact Info Cards ────────────────────────────
+    &__info-grid {
+        margin-top: 3rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+
+        @include sm {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    &__info-card {
+        padding: 1.5rem;
+        border-radius: $radius-2xl;
+        background: $bg-card;
+        border: 1px solid $border-subtle;
+        text-align: center;
+
+        &-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: $radius-xl;
+            background: rgba($primary-600, 0.1);
+            @include flex-center;
+            margin: 0 auto 0.75rem;
+            color: $text-primary;
+        }
+
+        &-title {
+            color: $text-white;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        &-value {
+            color: $text-subtle;
+            font-size: 0.875rem;
+        }
+    }
+}

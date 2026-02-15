@@ -1,0 +1,78 @@
+@use '../shared/variables' as *;
+@use '../shared/mixins' as *;
+
+.login {
+    min-height: 100vh;
+    @include flex-center;
+    background: $dark-950;
+    padding: 1rem;
+
+    &__container {
+        width: 100%;
+        max-width: 28rem;
+    }
+
+    // ─── Logo ──────────────────────────────────────────
+    &__header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    &__icon-box {
+        width: 4rem;
+        height: 4rem;
+        border-radius: $radius-2xl;
+        background: linear-gradient(to bottom right, $primary-600, $primary-800);
+        @include flex-center;
+        margin: 0 auto 1rem;
+        box-shadow: $shadow-primary;
+    }
+
+    &__title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $text-white;
+    }
+
+    &__subtitle {
+        color: $text-subtle;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+
+    // ─── Form ──────────────────────────────────────────
+    &__form {
+        @include card(false);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    &__error {
+        padding: 0.75rem;
+        border-radius: $radius-xl;
+        background: rgba($primary-600, 0.1);
+        border: 1px solid $border-primary-light;
+        color: $text-primary;
+        font-size: 0.875rem;
+        text-align: center;
+    }
+
+    &__field-label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: $text-muted;
+        margin-bottom: 0.5rem;
+    }
+
+    &__field-input {
+        @include input-base;
+        padding: 0.75rem 1rem;
+    }
+
+    &__submit {
+        @include btn-primary;
+        width: 100%;
+    }
+}
