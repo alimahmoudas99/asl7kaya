@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useDebounce } from '@/lib/hooks'; // We need to add this hook or implement debouncing differently
+
 import type { Video } from '@/lib/types';
 
 // Simple debounce implementation inside component to avoid extra file for now
