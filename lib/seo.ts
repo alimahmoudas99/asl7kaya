@@ -27,13 +27,61 @@ export function generateVideoMetadata(video: Video) {
     video.title,
     `تفاصيل ${video.title}`,
     `القصة الكاملة ${video.title}`,
+    `حقيقة ${video.title}`,
     categoryName,
+    // General crime keywords
     'جرائم حقيقية',
     'قصص جرائم',
-    'أصل الحكاية',
+    'جرائم واقعية',
     'قضايا جنائية',
+    'جرائم مصرية',
+    'جرائم مصر',
+    'جرائم عربية',
+    'جرائم مصر',
+    'حوادث حقيقية',
+    'قصص واقعية',
+    'سفاح',
+    'سفاح مصر',
+    'سفاح عربية', 
+    'سفاح مصر',
+    'سفاح عربية',
+    'سفاح مصر',
+    'سامح سند',
+    'قصص سامح سند',
+    'القصة الكاملة',
+    'تفاصيل القصة الكاملة',
+    // Brand keywords
+    'أصل الحكاية',
+    'أصل الحكاية مع علي',
+    'علي محمود',
+    'قناة أصل الحكاية',
+    'سامح سند',
+    'قصص سامح سند',
+    'القصة الكاملة',
+    'تفاصيل القصة الكاملة',
+    // Long-tail keywords
+    'قصص جرائم حقيقية',
+    'جرائم حقيقية مصرية',
+    'قضايا جنائية مصرية',
+    'حكايات جرائم',
+    'تحليل جرائم',
+    'جرائم غامضة',
+    'قصص بوليسية حقيقية',
+    'قصص جرائم مصر',
+    'قصص جرائم عربية',
+    'قصص جرائم مصر',
+    'قصص جرائم عربية',
+    'قصص جرائم مصر',
+    'قصص جرائم عربية',
+     'القصة الكاملة', 
+     'تفاصيل القصة الكاملة',
+    // Video-specific keywords
     ...(video.people_involved || []),
-    ...(video.location ? [video.location] : []),
+    ...(video.location ? [
+      video.location,
+      `جرائم ${video.location}`,
+      `حوادث ${video.location}`
+    ] : []),
   ];
 
   return {
@@ -84,20 +132,35 @@ export function generateVideoMetadata(video: Video) {
 
 export function generateCategoryMetadata(category: Category, videoCount: number) {
   const canonical = generateCanonicalUrl(`/category/${category.slug}`);
-
-  const title = `${category.name} | قصص جرائم حقيقية | ${SITE_CONFIG.shortName}`;
-  const description =
-    category.description ||
-    `اكتشف ${videoCount} قصة من فئة ${category.name}. تفاصيل حصرية وتحليل عميق لأغرب القضايا والجرائم الحقيقية في ${category.name}.`;
+  const title = `${category.name} | ${SITE_CONFIG.shortName}`;
+  const description = category.description || `استكشف أقوى قصص ${category.name} الحقيقية. ${videoCount} قصة مشوقة بأسلوب تحليلي احترافي.`;
 
   const keywords = [
     category.name,
     `قصص ${category.name}`,
-    `جرائم ${category.name}`,
+    `${category.name} حقيقية`,
+    `${category.name} مصرية`,
+    `${category.name} عربية`,
+    `حكايات ${category.name}`,
     `تفاصيل ${category.name}`,
+    // General keywords
     'جرائم حقيقية',
     'قصص جرائم',
+    'جرائم واقعية',
+    'قضايا جنائية',
+    'جرائم مصرية',
+    'جرائم عربية',
+    'حوادث حقيقية',
+    // Brand keywords
     'أصل الحكاية',
+    'أصل الحكاية مع علي',
+    'علي محمود',
+    // Long-tail keywords
+    'قصص جرائم حقيقية',
+    'جرائم حقيقية مصرية',
+    'قضايا جنائية مصرية',
+    'تحليل جرائم',
+    'قصص بوليسية',
   ];
 
   return {
