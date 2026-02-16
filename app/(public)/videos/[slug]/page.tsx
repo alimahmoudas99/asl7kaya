@@ -3,6 +3,16 @@ import { notFound } from 'next/navigation';
 import VideoPlayer from '@/components/VideoPlayer';
 import VideoCard from '@/components/VideoCard';
 import { getVideoBySlug, getRelatedVideos, incrementVideoViews } from '@/lib/queries';
+import {
+    generateVideoMetadata,
+    generateArticleSchema,
+    generateVideoObjectSchema,
+    generateBreadcrumbSchema,
+    generateFAQSchema,
+    generateVideoFAQs,
+    SITE_CONFIG,
+    calculateReadingTime,
+} from '@/lib/seo';
 
 interface Props {
     params: Promise<{ slug: string }>;
@@ -20,28 +30,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const video = await getVideoBySlug(slug);
 
     if (!video) {
-        return { title: 'فيديو غير موجود' };
+        return {
+            title: 'فيديو غير موجود',
+            robots: { index: false, follow: false },
+        };
     }
 
-    return {
-        title: video.title,
-        description: video.excerpt,
-        openGraph: {
-            title: video.title,
-            description: video.excerpt,
-            type: 'article',
-            images: video.thumbnail_url ? [video.thumbnail_url] : [],
-        },
-        twitter: {
-            card: 'summary_large_image',
-            title: video.title,
-            description: video.excerpt,
-            images: video.thumbnail_url ? [video.thumbnail_url] : [],
-        },
-    };
+    return generateVideoMetadata(video);
 }
 
-export const revalidate = 60; // ISR validation
+export const revalidate = 3600;
 
 export default async function VideoPage({ params }: Props) {
     const resolvedParams = await params;
@@ -72,38 +70,82 @@ export default async function VideoPage({ params }: Props) {
         day: 'numeric',
     });
 
-    // JSON-LD Structured Data
-    const jsonLd = {
-        '@context': 'https://schema.org',
-        '@type': 'Article',
-        headline: video.title,
-        description: video.excerpt,
-        image: video.thumbnail_url,
-        datePublished: video.published_at,
-        author: {
-            '@type': 'Organization',
-            name: 'أصل الحكاية',
-        },
-    };
+    const updatedDate = new Date(video.updated_at).toLocaleDateString('ar-EG', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+
+    const categoryName = (video.categories as unknown as { name: string })?.name || '';
+    const categorySlug = (video.categories as unknown as { slug: string })?.slug || '';
+
+    const articleSchema = generateArticleSchema(video);
+    const videoObjectSchema = generateVideoObjectSchema(video);
+    const faqItems = generateVideoFAQs(video);
+    const faqSchema = generateFAQSchema(faqItems);
+    
+    const breadcrumbSchema = generateBreadcrumbSchema([
+        { name: 'الرئيسية', url: SITE_CONFIG.url },
+        { name: categoryName, url: `${SITE_CONFIG.url}/category/${categorySlug}` },
+        { name: video.title, url: `${SITE_CONFIG.url}/videos/${video.slug}` },
+    ]);
+
+    const readingTime = calculateReadingTime(video.content);
 
     return (
         <div className="video-detail">
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(videoObjectSchema) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
             />
 
             <article className="video-detail__container" itemScope itemType="https://schema.org/Article">
-                {/* Header */}
+                <nav className="breadcrumb" aria-label="Breadcrumb">
+                    <ol itemScope itemType="https://schema.org/BreadcrumbList" style={{ display: 'flex', gap: '0.5rem', fontSize: '0.875rem', marginBottom: '1rem', color: '#666' }}>
+                        <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                            <a itemProp="item" href="/">
+                                <span itemProp="name">الرئيسية</span>
+                            </a>
+                            <meta itemProp="position" content="1" />
+                            <span style={{ margin: '0 0.5rem' }}>›</span>
+                        </li>
+                        {categoryName && (
+                            <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                                <a itemProp="item" href={`/category/${categorySlug}`}>
+                                    <span itemProp="name">{categoryName}</span>
+                                </a>
+                                <meta itemProp="position" content="2" />
+                                <span style={{ margin: '0 0.5rem' }}>›</span>
+                            </li>
+                        )}
+                        <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                            <span itemProp="name">{video.title}</span>
+                            <meta itemProp="position" content="3" />
+                        </li>
+                    </ol>
+                </nav>
+
                 <header className="mb-8">
-                    {(video.categories as unknown as { name: string })?.name && (
-                        <span className="video-detail__category-badge">
-                            {(video.categories as unknown as { name: string }).name}
-                        </span>
+                    {categoryName && (
+                        <a href={`/category/${categorySlug}`} className="video-detail__category-badge">
+                            {categoryName}
+                        </a>
                     )}
 
                     <h1 className="video-detail__title" itemProp="headline">{video.title}</h1>
-                    <p className="video-detail__excerpt">{video.excerpt}</p>
+                    <p className="video-detail__excerpt" itemProp="description">{video.excerpt}</p>
 
                     <div className="video-detail__meta">
                         <div className="video-detail__meta-item">
@@ -114,16 +156,30 @@ export default async function VideoPage({ params }: Props) {
                                 {formattedDate}
                             </time>
                         </div>
+                        <div className="video-detail__meta-item">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>{readingTime} دقائق قراءة</span>
+                        </div>
                         {video.location && (
                             <div className="video-detail__meta-item">
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
-                                <span>{video.location}</span>
+                                <span itemProp="contentLocation">{video.location}</span>
                             </div>
                         )}
                     </div>
+                    {video.updated_at !== video.published_at && (
+                        <div style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.5rem' }}>
+                            <meta itemProp="dateModified" content={video.updated_at} />
+                            آخر تحديث: {updatedDate}
+                        </div>
+                    )}
+                    <meta itemProp="author" content={SITE_CONFIG.author} />
+                    <meta itemProp="inLanguage" content="ar" />
                 </header>
 
                 {/* Video Player or Redirect Thumbnail */}
@@ -156,12 +212,29 @@ export default async function VideoPage({ params }: Props) {
                         />
                     )}
                 </div>
-                {/* Article Content */}
                 <div
                     className="article-content"
                     itemProp="articleBody"
                     dangerouslySetInnerHTML={{ __html: video.content }}
                 />
+
+                <section className="faq-section" style={{ marginTop: '3rem', padding: '2rem', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+                    <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>الأسئلة الشائعة</h2>
+                    <div itemScope itemType="https://schema.org/FAQPage">
+                        {faqItems.map((faq, index) => (
+                            <div key={index} itemScope itemProp="mainEntity" itemType="https://schema.org/Question" style={{ marginBottom: '1.5rem' }}>
+                                <h3 itemProp="name" style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem', color: '#1a1a1a' }}>
+                                    {faq.question}
+                                </h3>
+                                <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
+                                    <p itemProp="text" style={{ color: '#444', lineHeight: '1.6' }}>
+                                        {faq.answer}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
                 {/* People Involved (Tags) */}
                 {video.people_involved && video.people_involved.length > 0 && (
                     <div className="video-detail__people">

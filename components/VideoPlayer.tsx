@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 
 declare global {
     interface Window {
@@ -87,11 +88,18 @@ export default function VideoPlayer({
             <div
                 className="video-player"
                 onClick={() => setIsPlaying(true)}
+                style={{ cursor: 'pointer', position: 'relative', aspectRatio: '16/9' }}
             >
                 <div className="video-player__placeholder">
-                    <div
+                    <Image
+                        src={poster}
+                        alt={title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
                         className="video-player__thumbnail"
-                        style={{ backgroundImage: `url(${poster})` }}
+                        style={{ objectFit: 'cover' }}
+                        priority={false}
+                        loading="lazy"
                     />
                     <div className="video-player__overlay" />
 

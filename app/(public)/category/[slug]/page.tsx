@@ -2,6 +2,12 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import VideoCard from '@/components/VideoCard';
 import { getCategoryBySlug, getVideosByCategory } from '@/lib/queries';
+import {
+    generateCategoryMetadata,
+    generateBreadcrumbSchema,
+    generateCategoryIntro,
+    SITE_CONFIG,
+} from '@/lib/seo';
 
 interface Props {
     params: Promise<{ slug: string }>;
@@ -12,16 +18,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const category = await getCategoryBySlug(slug);
 
     if (!category) {
-        return { title: 'التصنيف غير موجود' };
+        return {
+            title: 'التصنيف غير موجود',
+            robots: { index: false, follow: false },
+        };
     }
 
-    return {
-        title: `${category.name} | أصل الحكاية`,
-        description: category.description || `قصص وتفاصيل عن ${category.name}`,
-    };
+    const videos = await getVideosByCategory(category.id);
+    return generateCategoryMetadata(category, videos.length);
 }
 
-export const revalidate = 60; // ISR validation
+export const revalidate = 3600;
 
 export default async function CategoryPage({ params }: Props) {
     const { slug } = await params;
@@ -33,10 +40,51 @@ export default async function CategoryPage({ params }: Props) {
 
     const videos = await getVideosByCategory(category.id);
 
+    const breadcrumbSchema = generateBreadcrumbSchema([
+        { name: 'الرئيسية', url: SITE_CONFIG.url },
+        { name: category.name, url: `${SITE_CONFIG.url}/category/${category.slug}` },
+    ]);
+
+    const collectionSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: category.name,
+        description: category.description || `مجموعة قصص ${category.name}`,
+        url: `${SITE_CONFIG.url}/category/${category.slug}`,
+        numberOfItems: videos.length,
+        inLanguage: 'ar',
+    };
+
+    const categoryIntroHtml = generateCategoryIntro(category);
+
     return (
         <div className="category-page" itemScope itemType="https://schema.org/CollectionPage">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+            />
+
             <div className="category-page__container">
-                {/* Header */}
+                <nav className="breadcrumb" aria-label="Breadcrumb" style={{ marginBottom: '1.5rem' }}>
+                    <ol itemScope itemType="https://schema.org/BreadcrumbList" style={{ display: 'flex', gap: '0.5rem', fontSize: '0.875rem', color: '#666' }}>
+                        <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                            <a itemProp="item" href="/">
+                                <span itemProp="name">الرئيسية</span>
+                            </a>
+                            <meta itemProp="position" content="1" />
+                            <span style={{ margin: '0 0.5rem' }}>›</span>
+                        </li>
+                        <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                            <span itemProp="name">{category.name}</span>
+                            <meta itemProp="position" content="2" />
+                        </li>
+                    </ol>
+                </nav>
+
                 <div className="category-page__header">
                     <div className="category-page__badge">
                         تصنيف
@@ -46,17 +94,22 @@ export default async function CategoryPage({ params }: Props) {
                         <p className="category-page__description" itemProp="description">{category.description}</p>
                     )}
                     <div className="category-page__count">
+                        <meta itemProp="numberOfItems" content={videos.length.toString()} />
                         {videos.length} قصة
                     </div>
                 </div>
 
-                {/* Videos Grid */}
+                <div className="category-intro" style={{ marginBottom: '3rem' }} dangerouslySetInnerHTML={{ __html: categoryIntroHtml }} />
+
                 {videos.length > 0 ? (
-                    <div className="category-page__grid">
-                        {videos.map((video) => (
-                            <VideoCard key={video.id} video={video} />
-                        ))}
-                    </div>
+                    <>
+                        <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>جميع القصص في {category.name}</h2>
+                        <div className="category-page__grid">
+                            {videos.map((video) => (
+                                <VideoCard key={video.id} video={video} />
+                            ))}
+                        </div>
+                    </>
                 ) : (
                     <div className="category-page__empty">
                         <div className="category-page__empty-icon">

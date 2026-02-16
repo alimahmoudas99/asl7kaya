@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Video } from '@/lib/types';
 
 export default function VideoCard({ video }: { video: Video }) {
@@ -41,10 +42,15 @@ export default function VideoCard({ video }: { video: Video }) {
                 <meta itemProp="image" content={thumbnailUrl} />
                 <link itemProp="url" href={`/videos/${video.slug}`} />
                 {/* Thumbnail Layer */}
-                <div className="video-card__thumbnail">
-                    <div
+                <div className="video-card__thumbnail" style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden' }}>
+                    <Image
+                        src={thumbnailUrl}
+                        alt={video.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="video-card__thumbnail-img"
-                        style={{ backgroundImage: `url(${thumbnailUrl})` }}
+                        style={{ objectFit: 'cover' }}
+                        loading="lazy"
                     />
                     <div className="video-card__thumbnail-overlay" />
 

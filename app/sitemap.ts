@@ -1,8 +1,10 @@
 import { MetadataRoute } from 'next';
 import { getAllVideos, getAllCategories } from '@/lib/queries';
 
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://stalwart-tiramisu-c3ecda.netlify.app';
 
     const [videos, categories] = await Promise.all([
         getAllVideos(),
@@ -13,36 +15,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: `${siteUrl}/videos/${video.slug}`,
         lastModified: new Date(video.updated_at),
         changeFrequency: 'weekly' as const,
-        priority: 0.8,
+        priority: 0.9,
     }));
 
     const categoryUrls = categories.map((cat) => ({
         url: `${siteUrl}/category/${cat.slug}`,
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,
-        priority: 0.6,
+        priority: 0.7,
     }));
 
     return [
         {
             url: siteUrl,
             lastModified: new Date(),
-            changeFrequency: 'daily',
-            priority: 1,
+            changeFrequency: 'daily' as const,
+            priority: 1.0,
         },
         {
             url: `${siteUrl}/about`,
             lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.5,
+            changeFrequency: 'monthly' as const,
+            priority: 0.4,
         },
         {
             url: `${siteUrl}/contact`,
             lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.5,
+            changeFrequency: 'monthly' as const,
+            priority: 0.4,
         },
-        ...videoUrls,
         ...categoryUrls,
+        ...videoUrls,
     ];
 }
