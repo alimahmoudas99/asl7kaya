@@ -27,7 +27,9 @@ export default function VideoPlayer({
     const poster = thumbnailUrl || `https://img.youtube.com/vi/${validId}/maxresdefault.jpg`;
     
     // Standard YouTube embed URL with proper parameters for view tracking
-    const embedUrl = `https://www.youtube.com/embed/${validId}?autoplay=1&rel=0&modestbranding=1`;
+    // Using origin and widget_referrer to ensure YouTube counts the view
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const embedUrl = `https://www.youtube.com/embed/${validId}?autoplay=1&rel=0&modestbranding=1&origin=${encodeURIComponent(origin)}&widget_referrer=${encodeURIComponent(origin)}`;
 
     if (!isPlaying) {
         return (
