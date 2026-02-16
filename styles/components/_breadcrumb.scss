@@ -1,0 +1,60 @@
+@use '../shared/variables' as *;
+@use '../shared/mixins' as *;
+
+.breadcrumb {
+    margin-bottom: 1.5rem;
+
+    &__list {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        list-style: none;
+        padding: 0.75rem 1.25rem;
+        background: rgba(#fff, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(#fff, 0.05);
+        border-radius: $radius-full;
+        font-size: 0.8125rem;
+        width: fit-content;
+
+        @include sm {
+            font-size: 0.875rem;
+        }
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        color: $text-muted;
+
+        &:not(:last-child)::after {
+            content: "›";
+            margin-inline-start: 0.5rem;
+            color: $text-faint;
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        a {
+            color: $text-muted;
+            text-decoration: none;
+            transition: all $transition-fast;
+
+            &:hover {
+                color: $text-primary;
+            }
+        }
+
+        &--active {
+            color: $text-white;
+            font-weight: 500;
+            @include line-clamp(1);
+            max-width: 200px;
+
+            @include sm {
+                max-width: 400px;
+            }
+        }
+    }
+}

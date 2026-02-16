@@ -69,16 +69,15 @@ export default async function CategoryPage({ params }: Props) {
             />
 
             <div className="category-page__container">
-                <nav className="breadcrumb" aria-label="Breadcrumb" style={{ marginBottom: '1.5rem' }}>
-                    <ol itemScope itemType="https://schema.org/BreadcrumbList" style={{ display: 'flex', gap: '0.5rem', fontSize: '0.875rem', color: '#666' }}>
-                        <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                <nav className="breadcrumb" aria-label="Breadcrumb">
+                    <ol className="breadcrumb__list" itemScope itemType="https://schema.org/BreadcrumbList">
+                        <li className="breadcrumb__item" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
                             <a itemProp="item" href="/">
                                 <span itemProp="name">الرئيسية</span>
                             </a>
                             <meta itemProp="position" content="1" />
-                            <span style={{ margin: '0 0.5rem' }}>›</span>
                         </li>
-                        <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                        <li className="breadcrumb__item breadcrumb__item--active" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
                             <span itemProp="name">{category.name}</span>
                             <meta itemProp="position" content="2" />
                         </li>

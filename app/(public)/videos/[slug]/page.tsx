@@ -83,7 +83,7 @@ export default async function VideoPage({ params }: Props) {
     const videoObjectSchema = generateVideoObjectSchema(video);
     const faqItems = generateVideoFAQs(video);
     const faqSchema = generateFAQSchema(faqItems);
-    
+
     const breadcrumbSchema = generateBreadcrumbSchema([
         { name: 'الرئيسية', url: SITE_CONFIG.url },
         { name: categoryName, url: `${SITE_CONFIG.url}/category/${categorySlug}` },
@@ -113,24 +113,22 @@ export default async function VideoPage({ params }: Props) {
 
             <article className="video-detail__container" itemScope itemType="https://schema.org/Article">
                 <nav className="breadcrumb" aria-label="Breadcrumb">
-                    <ol itemScope itemType="https://schema.org/BreadcrumbList" style={{ display: 'flex', gap: '0.5rem', fontSize: '0.875rem', marginBottom: '1rem', color: '#666' }}>
-                        <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                    <ol className="breadcrumb__list" itemScope itemType="https://schema.org/BreadcrumbList">
+                        <li className="breadcrumb__item" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
                             <a itemProp="item" href="/">
                                 <span itemProp="name">الرئيسية</span>
                             </a>
                             <meta itemProp="position" content="1" />
-                            <span style={{ margin: '0 0.5rem' }}>›</span>
                         </li>
                         {categoryName && (
-                            <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                            <li className="breadcrumb__item" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
                                 <a itemProp="item" href={`/category/${categorySlug}`}>
                                     <span itemProp="name">{categoryName}</span>
                                 </a>
                                 <meta itemProp="position" content="2" />
-                                <span style={{ margin: '0 0.5rem' }}>›</span>
                             </li>
                         )}
-                        <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+                        <li className="breadcrumb__item breadcrumb__item--active" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
                             <span itemProp="name">{video.title}</span>
                             <meta itemProp="position" content="3" />
                         </li>

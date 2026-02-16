@@ -42,11 +42,31 @@ export async function GET(request: Request) {
 
         const title = oEmbedData.title || (html.match(/<title>(.*?)<\/title>/)?.[1]?.replace(' - YouTube', '') || '');
 
-        // Extract description
-        const descMatch = html.match(/<meta name="description" content="(.*?)">/);
-        const description = descMatch ? decodeHtml(descMatch[1]) : '';
+        // Extract full description from ytInitialData or meta tags
+        let description = '';
+        const jsonMatch = html.match(/ytInitialData\s*=\s*({.*?});/);
+        if (jsonMatch) {
+            try {
+                const data = JSON.parse(jsonMatch[1]);
+                // Look for description in various possible locations in the JSON
+                const videoDetails = data.contents?.twoColumnWatchNextResults?.results?.results?.contents?.[0]?.videoPrimaryInfoRenderer;
+                const descriptionText = data.engagementPanels?.find((p: any) => p.engagementPanelSectionListRenderer?.targetId === 'engagement-panel-structured-description')
+                    ?.engagementPanelSectionListRenderer?.content?.structuredDescriptionContentRenderer?.items?.[1]
+                    ?.expandableVideoDescriptionBodyRenderer?.attributedDescriptionBodyText?.content;
 
-        // Extract keywords/tags
+                // Fallback to a simpler search in the JSON if the above fails
+                description = descriptionText || html.match(/"shortDescription":"(.*?)"/)?.[1]?.replace(/\\n/g, '\n').replace(/\\"/g, '"') || '';
+            } catch (e) {
+                console.error('Failed to parse ytInitialData:', e);
+            }
+        }
+
+        if (!description) {
+            const descMatch = html.match(/<meta name="description" content="(.*?)">/);
+            description = descMatch ? decodeHtml(descMatch[1]) : '';
+        }
+
+        // Extract keywords/tags from keywords meta tag or common locations
         const keywordsMatch = html.match(/<meta name="keywords" content="(.*?)">/);
         const keywords = keywordsMatch ? decodeHtml(keywordsMatch[1]).split(',').map(s => s.trim()) : [];
 
@@ -56,8 +76,8 @@ export async function GET(request: Request) {
 
         return NextResponse.json({
             title: decodeHtml(title),
-            description: description,
-            keywords: keywords,
+            description: decodeHtml(description).trim(),
+            keywords: keywords.filter(k => k.toLowerCase() !== 'youtube' && k.toLowerCase() !== 'video'),
             youtube_id: youtubeId,
             thumbnail_url: oEmbedData.thumbnail_url || `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`
         });
