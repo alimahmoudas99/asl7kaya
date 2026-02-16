@@ -1,14 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-
-declare global {
-    interface Window {
-        onYouTubeIframeAPIReady: () => void;
-        YT: any;
-    }
-}
 
 export default function VideoPlayer({
     youtubeId,
@@ -20,7 +13,6 @@ export default function VideoPlayer({
     thumbnailUrl?: string;
 }) {
     const [isPlaying, setIsPlaying] = useState(false);
-    const playerRef = useRef<any>(null);
 
     // Helper to extract YouTube ID
     const getYoutubeId = (idOrUrl: string) => {
@@ -33,55 +25,9 @@ export default function VideoPlayer({
 
     const validId = getYoutubeId(youtubeId);
     const poster = thumbnailUrl || `https://img.youtube.com/vi/${validId}/maxresdefault.jpg`;
-
-    useEffect(() => {
-        if (!isPlaying) return;
-
-        // Function to initialize the player
-        const initPlayer = () => {
-            if (playerRef.current) return;
-
-            const origin = window.location.origin;
-
-            playerRef.current = new window.YT.Player(`yt-player-${validId}`, {
-                videoId: validId,
-                height: '100%',
-                width: '100%',
-                playerVars: {
-                    autoplay: 1,
-                    rel: 0,
-                    playsinline: 1,
-                    enablejsapi: 1,
-                    origin: origin,
-                    modestbranding: 1
-                },
-                events: {
-                    onReady: (event: any) => {
-                        event.target.playVideo();
-                    }
-                }
-            });
-        };
-
-        // Load YouTube API if not already loaded
-        if (!window.YT) {
-            const tag = document.createElement('script');
-            tag.src = "https://www.youtube.com/iframe_api";
-            const firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-
-            window.onYouTubeIframeAPIReady = initPlayer;
-        } else {
-            initPlayer();
-        }
-
-        return () => {
-            if (playerRef.current && playerRef.current.destroy) {
-                playerRef.current.destroy();
-                playerRef.current = null;
-            }
-        };
-    }, [isPlaying, validId]);
+    
+    // Standard YouTube embed URL with proper parameters for view tracking
+    const embedUrl = `https://www.youtube.com/embed/${validId}?autoplay=1&rel=0&modestbranding=1`;
 
     if (!isPlaying) {
         return (
@@ -121,8 +67,22 @@ export default function VideoPlayer({
     }
 
     return (
-        <div className="video-player">
-            <div id={`yt-player-${validId}`} className="video-player__iframe"></div>
+        <div className="video-player" style={{ position: 'relative', aspectRatio: '16/9', width: '100%' }}>
+            <iframe
+                src={embedUrl}
+                title={title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    border: 'none',
+                    borderRadius: '8px'
+                }}
+            />
         </div>
     );
 }

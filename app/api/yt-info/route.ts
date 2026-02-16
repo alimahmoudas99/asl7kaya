@@ -24,7 +24,8 @@ export async function GET(request: Request) {
         // 2. Fetch the page for more details (description/keywords)
         const pageRes = await fetch(videoUrl, {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Accept-Language': 'ar,en;q=0.9'
             }
         });
         const html = await pageRes.text();

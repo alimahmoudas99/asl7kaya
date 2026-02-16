@@ -219,8 +219,8 @@ export default function EditVideoPage({ params }: { params: Promise<{ id: string
 
                 {/* Content */}
                 <div>
-                    <label className="dashboard__form-label">محتوى المقال (HTML)</label>
-                    <textarea {...register('content')} className="dashboard__form-textarea" rows={10} dir="ltr" />
+                    <label className="dashboard__form-label">محتوى القصة (يمكن استخدام HTML)</label>
+                    <textarea {...register('content')} className="dashboard__form-textarea" rows={10} dir="auto" />
                     {errors.content && <p className="dashboard__form-error">{errors.content.message}</p>}
                 </div>
 
@@ -243,11 +243,11 @@ export default function EditVideoPage({ params }: { params: Promise<{ id: string
 
                 {/* People Involved (Tag Input) */}
                 <div>
-                    <label className="dashboard__form-label">شخصيات القصة</label>
+                    <label className="dashboard__form-label">الكلمات الدلالية / شخصيات القصة</label>
                     <TagInput
                         initialTags={watch('people_involved') || []}
                         onChange={(tags) => setValue('people_involved', tags)}
-                        placeholder="اكتب اسم الشخصية واضغط Enter"
+                        placeholder="اكتب الوسم واضغط Enter"
                     />
                 </div>
 

@@ -210,8 +210,8 @@ export default function NewVideoPage() {
 
                 {/* Content */}
                 <div>
-                    <label className="dashboard__form-label">محتوى المقال (HTML)</label>
-                    <textarea {...register('content')} className="dashboard__form-textarea" rows={10} dir="ltr" />
+                    <label className="dashboard__form-label">محتوى القصة (يمكن استخدام HTML)</label>
+                    <textarea {...register('content')} className="dashboard__form-textarea" rows={10} dir="auto" />
                     <p className="dashboard__form-hint">يمكنك استخدام تنسيق HTML لكتابة المقال</p>
                     {errors.content && <p className="dashboard__form-error">{errors.content.message}</p>}
                 </div>
@@ -235,11 +235,11 @@ export default function NewVideoPage() {
 
                 {/* People Involved (Tag Input) */}
                 <div>
-                    <label className="dashboard__form-label">شخصيات القصة</label>
+                    <label className="dashboard__form-label">الكلمات الدلالية / شخصيات القصة</label>
                     <TagInput
                         onChange={(tags) => setValue('people_involved', tags)}
                         initialTags={watch('people_involved') || []}
-                        placeholder="اكتب اسم الشخصية واضغط Enter"
+                        placeholder="اكتب الوسم واضغط Enter"
                     />
                 </div>
 
