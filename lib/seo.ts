@@ -4,7 +4,7 @@ export const SITE_CONFIG = {
   name: 'أصل الحكاية مع علي',
   shortName: 'أصل الحكاية',
   description: 'منصة أصل الحكاية - أقوى القصص والجرائم الحقيقية بأسلوب تحليلي مشوّق. نستكشف أغرب القضايا من مصر والعالم العربي.',
-  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://stalwart-tiramisu-c3ecda.netlify.app',
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://aslel7kaya.netlify.app',
   author: 'علي محمود',
   locale: 'ar_EG',
   language: 'ar',
