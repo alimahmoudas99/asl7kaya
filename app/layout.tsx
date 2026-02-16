@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Cairo } from 'next/font/google';
 import '@/styles/main.scss';
+import Script from 'next/script';
 
 const cairo = Cairo({
   subsets: ['arabic', 'latin'],
@@ -54,7 +55,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ar" dir="rtl" className={cairo.variable}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-R28H1V6N4B"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-R28H1V6N4B');
+          `}
+        </Script>
+        {children}
+      </body>
     </html>
   );
 }
