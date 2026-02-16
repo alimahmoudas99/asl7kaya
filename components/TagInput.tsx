@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, KeyboardEvent } from 'react';
+import { useState, KeyboardEvent, useEffect } from 'react';
 
 interface TagInputProps {
     initialTags?: string[];
@@ -11,6 +11,10 @@ interface TagInputProps {
 export default function TagInput({ initialTags = [], onChange, placeholder }: TagInputProps) {
     const [tags, setTags] = useState<string[]>(initialTags);
     const [inputValue, setInputValue] = useState('');
+
+    useEffect(() => {
+        setTags(initialTags);
+    }, [initialTags]);
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' || e.key === ',') {

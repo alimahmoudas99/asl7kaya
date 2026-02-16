@@ -11,7 +11,7 @@ export default async function Home() {
     ]);
 
     return (
-        <div className="home">
+        <div className="home" itemScope itemType="https://schema.org/WebSite">
             {/* Hero Section */}
             <section className="home__hero">
                 <div className="home__hero-bg" />
@@ -28,10 +28,10 @@ export default async function Home() {
                     </div>
 
                     <h1 className="home__heading">
-                        <span className="gradient-text">أصل الحكاية</span>
+                        <span className="gradient-text" itemProp="name">أصل الحكاية</span>
                     </h1>
 
-                    <p className="home__subheading">
+                    <p className="home__subheading" itemProp="description">
                         نستكشف أغرب القضايا وأكثرها إثارة. جرائم حقيقية، اختفاءات غامضة، وقصص لم تُرِو من قبل.
                     </p>
 

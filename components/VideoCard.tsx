@@ -7,7 +7,19 @@ import type { Video } from '@/lib/types';
 export default function VideoCard({ video }: { video: Video }) {
     const [isHovered, setIsHovered] = useState(false);
 
-    const thumbnailUrl = video.thumbnail_url || `https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg`;
+    const getYoutubeId = (idOrUrl: string) => {
+        if (!idOrUrl) return '';
+        if (/^[a-zA-Z0-9_-]{11}$/.test(idOrUrl)) {
+            return idOrUrl;
+        }
+        const match = idOrUrl.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        return match ? match[1] : idOrUrl;
+    };
+
+    const validYoutubeId = getYoutubeId(video.youtube_id);
+    const thumbnailUrl = (video.thumbnail_url && video.thumbnail_url.trim() !== '')
+        ? video.thumbnail_url
+        : `https://img.youtube.com/vi/${validYoutubeId}/maxresdefault.jpg`;
     const categoryName = (video.categories as unknown as { name: string })?.name || 'قصة';
 
     const formattedDate = new Date(video.published_at).toLocaleDateString('ar-EG', {
@@ -23,7 +35,9 @@ export default function VideoCard({ video }: { video: Video }) {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            <article className="video-card__article">
+            <article className="video-card__article" itemScope itemType="https://schema.org/CreativeWork">
+                <meta itemProp="image" content={thumbnailUrl} />
+                <link itemProp="url" href={`/videos/${video.slug}`} />
                 {/* Thumbnail Layer */}
                 <div className="video-card__thumbnail">
                     <div
@@ -49,10 +63,10 @@ export default function VideoCard({ video }: { video: Video }) {
 
                 {/* Content */}
                 <div className="video-card__content">
-                    <h3 className="video-card__title">
+                    <h3 className="video-card__title" itemProp="name">
                         {video.title}
                     </h3>
-                    <p className="video-card__excerpt">
+                    <p className="video-card__excerpt" itemProp="description">
                         {video.excerpt}
                     </p>
 

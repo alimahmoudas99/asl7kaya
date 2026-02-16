@@ -34,16 +34,16 @@ export default async function CategoryPage({ params }: Props) {
     const videos = await getVideosByCategory(category.id);
 
     return (
-        <div className="category-page">
+        <div className="category-page" itemScope itemType="https://schema.org/CollectionPage">
             <div className="category-page__container">
                 {/* Header */}
                 <div className="category-page__header">
                     <div className="category-page__badge">
                         تصنيف
                     </div>
-                    <h1 className="category-page__title">{category.name}</h1>
+                    <h1 className="category-page__title" itemProp="name">{category.name}</h1>
                     {category.description && (
-                        <p className="category-page__description">{category.description}</p>
+                        <p className="category-page__description" itemProp="description">{category.description}</p>
                     )}
                     <div className="category-page__count">
                         {videos.length} قصة

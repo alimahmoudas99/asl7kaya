@@ -34,7 +34,7 @@ export default function ContactPage() {
     };
 
     return (
-        <div className="contact">
+        <div className="contact" itemScope itemType="https://schema.org/ContactPage">
             <div className="contact__container">
                 <div className="contact__header">
                     <h1 className="gradient-text">اتصل بنا</h1>

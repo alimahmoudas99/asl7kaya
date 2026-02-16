@@ -10,7 +10,13 @@ interface Props {
 
 // Generate Metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { slug } = await params;
+    const resolvedParams = await params;
+    let slug = resolvedParams.slug;
+
+    try {
+        slug = decodeURIComponent(slug);
+    } catch (e) { }
+
     const video = await getVideoBySlug(slug);
 
     if (!video) {
@@ -38,7 +44,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export const revalidate = 60; // ISR validation
 
 export default async function VideoPage({ params }: Props) {
-    const { slug } = await params;
+    const resolvedParams = await params;
+    let slug = resolvedParams.slug;
+
+    // Ensure slug is decoded (handles Arabic characters from URL)
+    try {
+        slug = decodeURIComponent(slug);
+    } catch (e) {
+        console.warn('Failed to decode slug:', slug);
+    }
+
     const video = await getVideoBySlug(slug);
 
     if (!video) {
@@ -75,7 +90,7 @@ export default async function VideoPage({ params }: Props) {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
 
-            <article className="video-detail__container">
+            <article className="video-detail__container" itemScope itemType="https://schema.org/Article">
                 {/* Header */}
                 <header className="mb-8">
                     {(video.categories as unknown as { name: string })?.name && (
@@ -84,7 +99,7 @@ export default async function VideoPage({ params }: Props) {
                         </span>
                     )}
 
-                    <h1 className="video-detail__title">{video.title}</h1>
+                    <h1 className="video-detail__title" itemProp="headline">{video.title}</h1>
                     <p className="video-detail__excerpt">{video.excerpt}</p>
 
                     <div className="video-detail__meta">
@@ -92,7 +107,9 @@ export default async function VideoPage({ params }: Props) {
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <span>{formattedDate}</span>
+                            <time itemProp="datePublished" dateTime={video.published_at}>
+                                {formattedDate}
+                            </time>
                         </div>
                         {video.location && (
                             <div className="video-detail__meta-item">
@@ -137,6 +154,7 @@ export default async function VideoPage({ params }: Props) {
                 {/* Article Content */}
                 <div
                     className="article-content"
+                    itemProp="articleBody"
                     dangerouslySetInnerHTML={{ __html: video.content }}
                 />
 

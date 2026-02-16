@@ -13,6 +13,9 @@ import ImageUpload from '@/components/ImageUpload';
 export default function NewVideoPage() {
     const router = useRouter();
     const [categories, setCategories] = useState<Category[]>([]);
+    const [ytUrl, setYtUrl] = useState('');
+    const [isFetchingYt, setIsFetchingYt] = useState(false);
+    const [isSlugManual, setIsSlugManual] = useState(false);
 
     const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<VideoFormData>({
         resolver: zodResolver(videoSchema),
@@ -23,6 +26,13 @@ export default function NewVideoPage() {
     });
 
     const thumbnailValue = watch('thumbnail_url');
+    const titleValue = watch('title');
+
+    useEffect(() => {
+        if (titleValue && !isSlugManual) {
+            setValue('slug', generateSlug(titleValue), { shouldValidate: true });
+        }
+    }, [titleValue, isSlugManual, setValue]);
 
     useEffect(() => {
         supabase.from('categories').select('*').then(({ data }) => {
@@ -30,12 +40,71 @@ export default function NewVideoPage() {
         });
     }, []);
 
+    const generateSlug = (text: string) => {
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/[^\u0600-\u06FFa-z0-9\s-]/g, '') // Keep Arabic, English, numbers, spaces, dashes
+            .replace(/\s+/g, '-') // Spaces to dashes
+            .replace(/-+/g, '-')  // Remove duplicate dashes
+            .replace(/^-+|-+$/g, ''); // Trim dashes from ends
+    };
+
+    const fetchMetadata = async () => {
+        if (!ytUrl || !ytUrl.includes('http')) {
+            alert('يرجى إدخال رابط يوتيوب صحيح');
+            return;
+        }
+
+        setIsFetchingYt(true);
+        try {
+            const response = await fetch(`/api/yt-info?url=${encodeURIComponent(ytUrl)}`);
+            const data = await response.json();
+
+            if (data.error) throw new Error(data.error);
+
+            // Populate form
+            if (data.title) {
+                setValue('title', data.title, { shouldValidate: true });
+                const slug = generateSlug(data.title);
+                if (slug) {
+                    setIsSlugManual(false); // Reset manual flag so it can be auto-filled
+                    setValue('slug', slug, { shouldValidate: true });
+                }
+            }
+
+            if (data.youtube_id) {
+                setValue('youtube_id', data.youtube_id, { shouldValidate: true });
+            }
+
+            if (data.description) {
+                // First 150 chars for excerpt
+                setValue('excerpt', data.description.substring(0, 160) + '...', { shouldValidate: true });
+                setValue('content', data.description, { shouldValidate: true });
+            }
+
+            if (data.keywords && data.keywords.length > 0) {
+                setValue('people_involved', data.keywords);
+            }
+
+            if (data.thumbnail_url) {
+                setValue('thumbnail_url', data.thumbnail_url, { shouldValidate: true });
+            }
+
+        } catch (error: any) {
+            alert('خطأ في جلب البيانات: ' + error.message);
+        } finally {
+            setIsFetchingYt(false);
+        }
+    };
+
     const onSubmit = async (data: VideoFormData) => {
         // Ensure people_involved is an array and thumbnail is present
         const payload = {
             ...data,
             people_involved: Array.isArray(data.people_involved) ? data.people_involved : [],
-            thumbnail_url: data.thumbnail_url || null, // Convert empty string to null for clean DB entry
+            thumbnail_url: data.thumbnail_url || null,
+            category_id: data.category_id || null, // Ensure empty string becomes null for UUID
         };
 
         const { error } = await supabase.from('videos').insert([payload]);
@@ -51,7 +120,7 @@ export default function NewVideoPage() {
 
         // Trigger revalidation
         await fetch('/api/revalidate?path=/');
-        if (data.slug) await fetch(`/api/revalidate?path=/videos/${data.slug}`);
+        if (data.slug) await fetch(`/api/revalidate?path=${encodeURIComponent(`/videos/${data.slug}`)}`);
 
         router.push('/dashboard/videos');
     };
@@ -62,6 +131,27 @@ export default function NewVideoPage() {
                 <h1 className="dashboard__page-header-title">إضافة قصة جديدة</h1>
             </div>
 
+            <div className="dashboard__form-card mb-6">
+                <label className="dashboard__form-label">استيراد من رابط يوتيوب</label>
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        value={ytUrl}
+                        onChange={(e) => setYtUrl(e.target.value)}
+                        placeholder="ضع رابط فيديو يوتيوب هنا..."
+                        className="dashboard__form-input flex-1"
+                    />
+                    <button
+                        type="button"
+                        onClick={fetchMetadata}
+                        disabled={isFetchingYt}
+                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
+                    >
+                        {isFetchingYt ? 'جاري السحب...' : 'سحب البيانات'}
+                    </button>
+                </div>
+            </div>
+
             <form onSubmit={handleSubmit(onSubmit)} className="dashboard__form-card">
                 {/* Title */}
                 <div>
@@ -70,11 +160,18 @@ export default function NewVideoPage() {
                     {errors.title && <p className="dashboard__form-error">{errors.title.message}</p>}
                 </div>
 
-                {/* Slug */}
                 <div>
                     <label className="dashboard__form-label">الرابط (Slug)</label>
-                    <input {...register('slug')} className="dashboard__form-input" dir="ltr" />
-                    <p className="dashboard__form-hint">يجب أن يكون بالإنجليزية وبدون مسافات، مثال: crime-story-1</p>
+                    <input
+                        {...register('slug', {
+                            onChange: (e) => {
+                                setIsSlugManual(true);
+                            }
+                        })}
+                        className="dashboard__form-input"
+                        dir="auto"
+                    />
+                    <p className="dashboard__form-hint">يمكن أن يكون بالعربية أو الإنجليزية، بدون مسافات، مثال: قصة-جريمة-1</p>
                     {errors.slug && <p className="dashboard__form-error">{errors.slug.message}</p>}
                 </div>
 
@@ -134,7 +231,7 @@ export default function NewVideoPage() {
                     <label className="dashboard__form-label">شخصيات القصة</label>
                     <TagInput
                         onChange={(tags) => setValue('people_involved', tags)}
-                        initialTags={[]}
+                        initialTags={watch('people_involved') || []}
                         placeholder="اكتب اسم الشخصية واضغط Enter"
                     />
                 </div>

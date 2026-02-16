@@ -40,11 +40,31 @@ export async function getVideoBySlug(slug: string) {
     const supabase = getSupabase();
     if (!supabase) return null;
 
-    const { data, error } = await supabase
+    // 1. Try matching with the provided slug
+    let { data, error } = await supabase
         .from('videos')
         .select('*, categories(name, slug)')
         .eq('slug', slug)
         .single();
+
+    // 2. Fallback: If not found and slug looks encoded, try matching with decoded version
+    if (!data && slug.includes('%')) {
+        try {
+            const decodedSlug = decodeURIComponent(slug);
+            const { data: decodedData, error: decodedError } = await supabase
+                .from('videos')
+                .select('*, categories(name, slug)')
+                .eq('slug', decodedSlug)
+                .single();
+
+            if (decodedData) {
+                data = decodedData;
+                error = decodedError;
+            }
+        } catch (e) {
+            // Decoding failed, ignore fallback
+        }
+    }
 
     if (error) {
         console.error('Error fetching video by slug:', error);

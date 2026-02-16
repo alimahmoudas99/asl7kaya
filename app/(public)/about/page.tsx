@@ -5,7 +5,7 @@ export const metadata = {
 
 export default function AboutPage() {
     return (
-        <div className="about">
+        <div className="about" itemScope itemType="https://schema.org/AboutPage">
             <div className="about__container">
                 {/* Header */}
                 <div className="about__header">

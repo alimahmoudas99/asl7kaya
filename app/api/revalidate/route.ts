@@ -12,7 +12,23 @@ export async function POST(request: NextRequest) {
 
         revalidatePath(path);
         return NextResponse.json({ revalidated: true, path });
-    } catch {
-        return NextResponse.json({ error: 'Failed to revalidate' }, { status: 500 });
+    } catch (error: any) {
+        return NextResponse.json({ error: 'Failed to revalidate: ' + error.message }, { status: 500 });
+    }
+}
+
+export async function GET(request: NextRequest) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const path = searchParams.get('path');
+
+        if (!path) {
+            return NextResponse.json({ error: 'Path is required' }, { status: 400 });
+        }
+
+        revalidatePath(path);
+        return NextResponse.json({ revalidated: true, path });
+    } catch (error: any) {
+        return NextResponse.json({ error: 'Failed to revalidate: ' + error.message }, { status: 500 });
     }
 }

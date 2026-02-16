@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const videoSchema = z.object({
     title: z.string().min(3, 'العنوان مطلوب (3 أحرف على الأقل)'),
-    slug: z.string().min(3, 'الرابط المختصر مطلوب').regex(/^[a-z0-9-]+$/, 'الرابط يجب أن يحتوي على أحرف إنجليزية صغيرة وأرقام وشرطات فقط'),
+    slug: z.string().min(3, 'الرابط المختصر مطلوب').regex(/^[a-z0-9-\u0600-\u06FF]+$/, 'الرابط يجب أن يحتوي على أحرف (عربية أو إنجليزية) وأرقام وشرطات فقط'),
     excerpt: z.string().min(10, 'الوصف المختصر مطلوب (10 أحرف على الأقل)'),
     content: z.string().min(50, 'المحتوى مطلوب (50 حرف على الأقل)'),
     youtube_id: z.string().min(5, 'معرّف يوتيوب مطلوب'),
@@ -14,7 +14,7 @@ export const videoSchema = z.object({
 
 export const categorySchema = z.object({
     name: z.string().min(2, 'اسم التصنيف مطلوب'),
-    slug: z.string().min(2, 'الرابط المختصر مطلوب').regex(/^[a-z0-9-]+$/, 'الرابط يجب أن يحتوي على أحرف إنجليزية صغيرة وأرقام وشرطات فقط'),
+    slug: z.string().min(2, 'الرابط المختصر مطلوب').regex(/^[a-z0-9-\u0600-\u06FF]+$/, 'الرابط يجب أن يحتوي على أحرف (عربية أو إنجليزية) وأرقام وشرطات فقط'),
     description: z.string().optional(),
 });
 
