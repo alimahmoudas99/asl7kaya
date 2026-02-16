@@ -218,14 +218,14 @@ export default async function VideoPage({ params }: Props) {
 
                 <section className="faq-section" style={{ marginTop: '3rem', padding: '2rem', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
                     <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>الأسئلة الشائعة</h2>
-                    <div itemScope itemType="https://schema.org/FAQPage">
+                    <div>
                         {faqItems.map((faq, index) => (
-                            <div key={index} itemScope itemProp="mainEntity" itemType="https://schema.org/Question" style={{ marginBottom: '1.5rem' }}>
-                                <h3 itemProp="name" style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem', color: '#1a1a1a' }}>
+                            <div key={index} style={{ marginBottom: '1.5rem' }}>
+                                <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem', color: '#1a1a1a' }}>
                                     {faq.question}
                                 </h3>
-                                <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
-                                    <p itemProp="text" style={{ color: '#444', lineHeight: '1.6' }}>
+                                <div>
+                                    <p style={{ color: '#444', lineHeight: '1.6' }}>
                                         {faq.answer}
                                     </p>
                                 </div>
