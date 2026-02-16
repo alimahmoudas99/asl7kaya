@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import VideoCard from '@/components/VideoCard';
-import { getLatestVideos, getAllCategories } from '@/lib/queries';
+import { getAllVideos, getAllCategories } from '@/lib/queries';
 
 export const revalidate = 60; // ISR
 
 export default async function Home() {
     const [videos, categories] = await Promise.all([
-        getLatestVideos(),
+        getAllVideos(),
         getAllCategories(),
     ]);
 
@@ -36,8 +36,8 @@ export default async function Home() {
                     </p>
 
                     <div className="home__cta-group">
-                        <a href="#latest" className="home__cta-primary">
-                            شاهد أحدث القصص
+                        <a href="#all-stories" className="home__cta-primary">
+                            شاهد جميع القصص
                         </a>
                         <Link href="/about" className="home__cta-secondary">
                             من نحن
@@ -80,9 +80,9 @@ export default async function Home() {
             </section>
 
             {/* Latest Videos */}
-            <section id="latest" className="home__latest">
+            <section id="all-stories" className="home__latest">
                 <div className="home__latest-header">
-                    <h2 className="gradient-text">أحدث القصص</h2>
+                    <h2 className="gradient-text">جميع القصص</h2>
                     <div className="home__latest-divider" />
                 </div>
 

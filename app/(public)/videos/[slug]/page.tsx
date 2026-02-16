@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import VideoPlayer from '@/components/VideoPlayer';
 import VideoCard from '@/components/VideoCard';
-import { getVideoBySlug, getRelatedVideos } from '@/lib/queries';
+import { getVideoBySlug, getRelatedVideos, incrementVideoViews } from '@/lib/queries';
 
 interface Props {
     params: Promise<{ slug: string }>;
@@ -59,6 +59,9 @@ export default async function VideoPage({ params }: Props) {
     if (!video) {
         notFound();
     }
+
+    // Increment views (internal tracking)
+    await incrementVideoViews(video.id);
 
     // Get related videos
     const relatedVideos = await getRelatedVideos(video.category_id, video.id);
@@ -123,15 +126,42 @@ export default async function VideoPage({ params }: Props) {
                     </div>
                 </header>
 
-                {/* Video Player */}
+                {/* Video Player or Redirect Thumbnail */}
                 <div className="video-detail__player">
-                    <VideoPlayer
-                        youtubeId={video.youtube_id}
-                        title={video.title}
-                        thumbnailUrl={video.thumbnail_url || undefined}
-                    />
+                    {video.is_external_only ? (
+                        <a
+                            href={`https://www.youtube.com/watch?v=${video.youtube_id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="video-detail__external-preview"
+                        >
+                            <div
+                                className="video-detail__external-thumb"
+                                style={{ backgroundImage: `url(${video.thumbnail_url || `https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg`})` }}
+                            />
+                            <div className="video-detail__external-overlay">
+                                <div className="video-detail__external-play-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg>
+                                </div>
+                                <span className="video-detail__external-hint">شاهد القصة كاملة على يوتيوب</span>
+                            </div>
+                        </a>
+                    ) : (
+                        <VideoPlayer
+                            youtubeId={video.youtube_id}
+                            title={video.title}
+                            thumbnailUrl={video.thumbnail_url || undefined}
+                        />
+                    )}
                 </div>
-
+                {/* Article Content */}
+                <div
+                    className="article-content"
+                    itemProp="articleBody"
+                    dangerouslySetInnerHTML={{ __html: video.content }}
+                />
                 {/* People Involved (Tags) */}
                 {video.people_involved && video.people_involved.length > 0 && (
                     <div className="video-detail__people">
@@ -151,12 +181,7 @@ export default async function VideoPage({ params }: Props) {
                     </div>
                 )}
 
-                {/* Article Content */}
-                <div
-                    className="article-content"
-                    itemProp="articleBody"
-                    dangerouslySetInnerHTML={{ __html: video.content }}
-                />
+
 
                 {/* Related Videos */}
                 {relatedVideos.length > 0 && (

@@ -50,6 +50,7 @@ export default function VideosPage() {
                             <th>العنوان</th>
                             <th>التصنيف</th>
                             <th>تاريخ النشر</th>
+                            <th>المشاهدات</th>
                             <th>الإجراءات</th>
                         </tr>
                     </thead>
@@ -88,6 +89,9 @@ export default function VideosPage() {
                                     </td>
                                     <td className="text-sm text-gray-400">
                                         {new Date(video.published_at).toLocaleDateString('ar-EG')}
+                                    </td>
+                                    <td className="text-sm font-semibold text-primary-400">
+                                        {video.views || 0}
                                     </td>
                                     <td>
                                         <div className="flex items-center gap-2">

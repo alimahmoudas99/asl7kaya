@@ -28,10 +28,12 @@ export default function VideoCard({ video }: { video: Video }) {
         day: 'numeric',
     });
 
+    const youtubeUrl = `https://www.youtube.com/watch?v=${validYoutubeId}`;
+
     return (
         <Link
             href={`/videos/${video.slug}`}
-            className="video-card"
+            className={`video-card ${video.is_external_only ? 'video-card--external' : ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -59,6 +61,12 @@ export default function VideoCard({ video }: { video: Video }) {
                     <div className="video-card__category">
                         {categoryName}
                     </div>
+
+                    {video.is_external_only && (
+                        <div className="video-card__external-badge">
+                            يوتيوب
+                        </div>
+                    )}
                 </div>
 
                 {/* Content */}
@@ -78,13 +86,22 @@ export default function VideoCard({ video }: { video: Video }) {
                             <span>{formattedDate}</span>
                         </div>
 
-                        <div className="video-card__meta-item">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            <span>مشاهدة القصة</span>
-                        </div>
+                        {video.is_external_only ? (
+                            <div className="video-card__meta-item text-red-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                                </svg>
+                                <span>مشاهدة على يوتيوب</span>
+                            </div>
+                        ) : (
+                            <div className="video-card__meta-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <span>مشاهدة القصة</span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </article>

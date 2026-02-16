@@ -183,3 +183,28 @@ export async function submitContactMessage(name: string, email: string, message:
     }
     return true;
 }
+
+export async function incrementVideoViews(videoId: string) {
+    const supabase = getSupabase();
+    if (!supabase) return;
+
+    // Use RPC for atomic increment to avoid race conditions
+    // Requires a Supabase function: 
+    // CREATE OR REPLACE FUNCTION increment_views(video_id UUID) 
+    // RETURNS void AS $$ 
+    // BEGIN 
+    //   UPDATE videos SET views = views + 1 WHERE id = video_id; 
+    // END; $$ LANGUAGE plpgsql;
+
+    // Fallback to direct update if RPC is not set up yet (less efficient/accurate)
+    const { error } = await supabase.rpc('increment_views', { video_id: videoId });
+
+    if (error) {
+        console.warn('RPC increment_views failed, falling back to direct increment:', error);
+        // Direct increment fallback
+        const { data: current } = await supabase.from('videos').select('views').eq('id', videoId).single();
+        if (current) {
+            await supabase.from('videos').update({ views: (current.views || 0) + 1 }).eq('id', videoId);
+        }
+    }
+}

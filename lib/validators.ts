@@ -6,10 +6,11 @@ export const videoSchema = z.object({
     excerpt: z.string().min(10, 'الوصف المختصر مطلوب (10 أحرف على الأقل)'),
     content: z.string().min(50, 'المحتوى مطلوب (50 حرف على الأقل)'),
     youtube_id: z.string().min(5, 'معرّف يوتيوب مطلوب'),
-    thumbnail_url: z.string().nullable().optional().or(z.literal('')),
+    thumbnail_url: z.string().optional().nullable(),
     location: z.string().optional(),
     people_involved: z.array(z.string()).optional(),
-    category_id: z.string().uuid('اختر تصنيفاً صالحاً').optional().or(z.literal('')),
+    category_id: z.string().optional().nullable().or(z.literal('')),
+    is_external_only: z.boolean().optional(),
 });
 
 export const categorySchema = z.object({

@@ -95,6 +95,22 @@
         z-index: 10;
     }
 
+    &__external-badge {
+        position: absolute;
+        bottom: 0.75rem;
+        left: 0.75rem;
+        padding: 0.2rem 0.6rem;
+        background: #ff0000;
+        border-radius: 4px;
+        font-size: 0.65rem;
+        font-weight: 900;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
     // ─── Content ───────────────────────────────────────
     &__content {
         padding: 1.25rem;

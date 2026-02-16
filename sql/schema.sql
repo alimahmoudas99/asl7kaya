@@ -24,6 +24,7 @@ create table videos (
   location text,
   people_involved text[],
   category_id uuid references categories(id) on delete set null,
+  is_external_only boolean default false,
   published_at timestamp default now(),
   updated_at timestamp default now(),
   created_at timestamp default now()

@@ -79,6 +79,96 @@
     // ─── Player Section ────────────────────────────────
     &__player {
         margin-bottom: 3rem;
+        position: relative;
+    }
+
+    &__external-preview {
+        display: block;
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%; // 16:9 Aspect Ratio
+        border-radius: $radius-xl;
+        overflow: hidden;
+        cursor: pointer;
+        box-shadow: $shadow-card;
+        transition: transform 0.3s ease;
+
+        &:hover {
+            transform: scale(1.01);
+
+            .video-detail__external-overlay {
+                background: rgba(0, 0, 0, 0.4);
+            }
+
+            .video-detail__external-play-btn {
+                transform: translate(-50%, -50%) scale(1.1);
+                background: #ff0000;
+            }
+
+            .video-detail__external-hint {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+    }
+
+    &__external-thumb {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+    }
+
+    &__external-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.2);
+        transition: background 0.3s ease;
+    }
+
+    &__external-play-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 0, 0, 0.9);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+        svg {
+            width: 40px;
+            height: 40px;
+            margin-left: 5px; // Optical alignment for play icon
+        }
+    }
+
+    &__external-hint {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translate(-50%, 10px);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 1rem;
+        font-weight: 500;
+        opacity: 0;
+        transition: all 0.3s ease;
+        white-space: nowrap;
     }
 
     // ─── People Involved ──────────────────────────────

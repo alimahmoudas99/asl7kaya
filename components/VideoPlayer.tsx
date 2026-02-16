@@ -1,6 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+declare global {
+    interface Window {
+        onYouTubeIframeAPIReady: () => void;
+        YT: any;
+    }
+}
 
 export default function VideoPlayer({
     youtubeId,
@@ -12,22 +19,68 @@ export default function VideoPlayer({
     thumbnailUrl?: string;
 }) {
     const [isPlaying, setIsPlaying] = useState(false);
+    const playerRef = useRef<any>(null);
+
     // Helper to extract YouTube ID
     const getYoutubeId = (idOrUrl: string) => {
-        // If it's already a short ID (11 characters, alphanumeric + - _)
         if (/^[a-zA-Z0-9_-]{11}$/.test(idOrUrl)) {
             return idOrUrl;
         }
-
-        // Try to extract from URL
         const match = idOrUrl.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
         return match ? match[1] : idOrUrl;
     };
 
     const validId = getYoutubeId(youtubeId);
-
-    // Update poster to use validId if no custom thumbnail
     const poster = thumbnailUrl || `https://img.youtube.com/vi/${validId}/maxresdefault.jpg`;
+
+    useEffect(() => {
+        if (!isPlaying) return;
+
+        // Function to initialize the player
+        const initPlayer = () => {
+            if (playerRef.current) return;
+
+            const origin = window.location.origin;
+
+            playerRef.current = new window.YT.Player(`yt-player-${validId}`, {
+                videoId: validId,
+                height: '100%',
+                width: '100%',
+                playerVars: {
+                    autoplay: 1,
+                    rel: 0,
+                    playsinline: 1,
+                    enablejsapi: 1,
+                    origin: origin,
+                    modestbranding: 1
+                },
+                events: {
+                    onReady: (event: any) => {
+                        event.target.playVideo();
+                    }
+                }
+            });
+        };
+
+        // Load YouTube API if not already loaded
+        if (!window.YT) {
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+
+            window.onYouTubeIframeAPIReady = initPlayer;
+        } else {
+            initPlayer();
+        }
+
+        return () => {
+            if (playerRef.current && playerRef.current.destroy) {
+                playerRef.current.destroy();
+                playerRef.current = null;
+            }
+        };
+    }, [isPlaying, validId]);
 
     if (!isPlaying) {
         return (
@@ -59,18 +112,9 @@ export default function VideoPlayer({
         );
     }
 
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
-
     return (
         <div className="video-player">
-            <iframe
-                className="video-player__iframe"
-                src={`https://www.youtube.com/embed/${validId}?autoplay=1&rel=0&playsinline=1&enablejsapi=1&origin=${origin}`}
-                title={title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-            />
+            <div id={`yt-player-${validId}`} className="video-player__iframe"></div>
         </div>
-
     );
 }

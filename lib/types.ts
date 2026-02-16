@@ -17,6 +17,8 @@ export type Video = {
   location: string | null;
   people_involved: string[] | null;
   category_id: string | null;
+  is_external_only: boolean;
+  views: number;
   published_at: string;
   updated_at: string;
   created_at: string;

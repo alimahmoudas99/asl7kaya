@@ -209,7 +209,11 @@
         margin-bottom: 3rem;
 
         @include sm {
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @include lg {
+            grid-template-columns: repeat(4, 1fr);
         }
     }
 
@@ -236,6 +240,10 @@
         &--green {
             border-color: rgba(22, 163, 74, 0.2);
         }
+
+        &--purple {
+            border-color: rgba(147, 51, 234, 0.2);
+        }
     }
 
     &__stat-icon {
@@ -258,6 +266,11 @@
         &--green {
             background: rgba(22, 163, 74, 0.1);
             color: #4ade80;
+        }
+
+        &--purple {
+            background: rgba(147, 51, 234, 0.1);
+            color: #a78bfa;
         }
     }
 

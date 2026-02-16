@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, use } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { videoSchema, type VideoFormData } from '@/lib/validators';
@@ -18,8 +18,18 @@ export default function EditVideoPage({ params }: { params: Promise<{ id: string
     const [isFetchingYt, setIsFetchingYt] = useState(false);
     const [isSlugManual, setIsSlugManual] = useState(false);
 
-    const { register, handleSubmit, reset, setValue, watch, formState: { errors, isSubmitting } } = useForm<VideoFormData>({
+    const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<VideoFormData>({
         resolver: zodResolver(videoSchema),
+        defaultValues: {
+            title: '',
+            slug: '',
+            excerpt: '',
+            content: '',
+            youtube_id: '',
+            people_involved: [],
+            thumbnail_url: '',
+            is_external_only: false,
+        }
     });
 
     const thumbnailValue = watch('thumbnail_url');
@@ -106,12 +116,13 @@ export default function EditVideoPage({ params }: { params: Promise<{ id: string
         }
     };
 
-    const onSubmit = async (data: VideoFormData) => {
+    const onSubmit: SubmitHandler<VideoFormData> = async (data) => {
         const payload = {
             ...data,
             people_involved: Array.isArray(data.people_involved) ? data.people_involved : [],
             thumbnail_url: data.thumbnail_url || null,
             category_id: data.category_id || null, // Ensure empty string becomes null for UUID
+            is_external_only: data.is_external_only ?? false,
         };
 
         const { error } = await supabase.from('videos').update(payload).eq('id', id);
@@ -238,6 +249,19 @@ export default function EditVideoPage({ params }: { params: Promise<{ id: string
                         onChange={(tags) => setValue('people_involved', tags)}
                         placeholder="اكتب اسم الشخصية واضغط Enter"
                     />
+                </div>
+
+                {/* External Link Toggle */}
+                <div className="flex items-center gap-3">
+                    <input
+                        type="checkbox"
+                        id="is_external_only"
+                        {...register('is_external_only')}
+                        className="w-5 h-5 accent-red-600 rounded cursor-pointer"
+                    />
+                    <label htmlFor="is_external_only" className="dashboard__form-label mb-0 cursor-pointer">
+                        فتح الفيديو في يوتيوب مباشرة (بدلاً من تشغيله في الموقع)
+                    </label>
                 </div>
 
                 <div className="dashboard__form-actions">
