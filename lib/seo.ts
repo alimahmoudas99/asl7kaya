@@ -153,13 +153,19 @@ export function generateOrganizationSchema() {
 export function generateArticleSchema(video: Video) {
   const categoryName = (video.categories as unknown as { name: string })?.name || '';
   const categorySlug = (video.categories as unknown as { slug: string })?.slug || '';
+  const imageUrl = video.thumbnail_url || `https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg`;
 
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: video.title,
     description: video.excerpt,
-    image: video.thumbnail_url || `${SITE_CONFIG.url}/default-thumbnail.jpg`,
+    image: {
+      '@type': 'ImageObject',
+      url: imageUrl,
+      width: 1280,
+      height: 720,
+    },
     datePublished: video.published_at,
     dateModified: video.updated_at,
     author: {
@@ -173,6 +179,8 @@ export function generateArticleSchema(video: Video) {
       logo: {
         '@type': 'ImageObject',
         url: `${SITE_CONFIG.url}/logo.png`,
+        width: 600,
+        height: 60,
       },
     },
     mainEntityOfPage: {
@@ -193,23 +201,37 @@ export function generateArticleSchema(video: Video) {
 }
 
 export function generateVideoObjectSchema(video: Video) {
+  const thumbnailUrl = video.thumbnail_url || `https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg`;
+  
   return {
     '@context': 'https://schema.org',
     '@type': 'VideoObject',
     name: video.title,
     description: video.excerpt,
-    thumbnailUrl: video.thumbnail_url || `https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg`,
+    thumbnailUrl: [thumbnailUrl],
     uploadDate: video.published_at,
     contentUrl: `https://www.youtube.com/watch?v=${video.youtube_id}`,
     embedUrl: `https://www.youtube.com/embed/${video.youtube_id}`,
     duration: 'PT15M',
+    author: {
+      '@type': 'Person',
+      name: SITE_CONFIG.author,
+      url: SITE_CONFIG.url,
+    },
     publisher: {
       '@type': 'Organization',
       name: SITE_CONFIG.name,
       logo: {
         '@type': 'ImageObject',
         url: `${SITE_CONFIG.url}/logo.png`,
+        width: 600,
+        height: 60,
       },
+    },
+    interactionStatistic: {
+      '@type': 'InteractionCounter',
+      interactionType: { '@type': 'WatchAction' },
+      userInteractionCount: video.views || 0,
     },
     inLanguage: 'ar',
   };
