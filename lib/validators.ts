@@ -11,6 +11,7 @@ export const videoSchema = z.object({
     people_involved: z.array(z.string()).optional(),
     category_id: z.string().optional().nullable().or(z.literal('')),
     is_external_only: z.boolean().optional(),
+    is_best: z.boolean().optional(),
 });
 
 export const categorySchema = z.object({

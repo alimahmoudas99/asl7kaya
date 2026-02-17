@@ -256,6 +256,19 @@ export default function NewVideoPage() {
                     </label>
                 </div>
 
+                {/* Best Video Toggle */}
+                <div className="flex items-center gap-3">
+                    <input
+                        type="checkbox"
+                        id="is_best"
+                        {...register('is_best')}
+                        className="w-5 h-5 accent-red-600 rounded cursor-pointer"
+                    />
+                    <label htmlFor="is_best" className="dashboard__form-label mb-0 cursor-pointer">
+                        الافضل مشاهدة (سيظهر في قسم خاص في الصفحة الرئيسية)
+                    </label>
+                </div>
+
                 <div className="dashboard__form-actions">
                     <button type="submit" disabled={isSubmitting} className="dashboard__form-submit">
                         {isSubmitting ? 'جاري الحفظ...' : 'حفظ ونشر'}

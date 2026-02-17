@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import VideoCard from '@/components/VideoCard';
+import Breadcrumb from '@/components/Breadcrumb';
 import { getCategoryBySlug, getVideosByCategory } from '@/lib/queries';
 import {
     generateCategoryMetadata,
-    generateBreadcrumbSchema,
     generateCategoryIntro,
     SITE_CONFIG,
 } from '@/lib/seo';
@@ -40,10 +40,9 @@ export default async function CategoryPage({ params }: Props) {
 
     const videos = await getVideosByCategory(category.id);
 
-    const breadcrumbSchema = generateBreadcrumbSchema([
-        { name: 'الرئيسية', url: SITE_CONFIG.url },
-        { name: category.name, url: `${SITE_CONFIG.url}/category/${category.slug}` },
-    ]);
+    const breadcrumbItems = [
+        { name: category.name, href: `/category/${category.slug}` },
+    ];
 
     const collectionSchema = {
         '@context': 'https://schema.org',
@@ -61,28 +60,11 @@ export default async function CategoryPage({ params }: Props) {
         <div className="category-page" itemScope itemType="https://schema.org/CollectionPage">
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-            />
-            <script
-                type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
             />
 
             <div className="category-page__container">
-                <nav className="breadcrumb" aria-label="Breadcrumb">
-                    <ol className="breadcrumb__list" itemScope itemType="https://schema.org/BreadcrumbList">
-                        <li className="breadcrumb__item" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
-                            <a itemProp="item" href="/">
-                                <span itemProp="name">الرئيسية</span>
-                            </a>
-                            <meta itemProp="position" content="1" />
-                        </li>
-                        <li className="breadcrumb__item breadcrumb__item--active" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
-                            <span itemProp="name">{category.name}</span>
-                            <meta itemProp="position" content="2" />
-                        </li>
-                    </ol>
-                </nav>
+                <Breadcrumb items={breadcrumbItems} />
 
                 <div className="category-page__header">
                     <div className="category-page__badge">

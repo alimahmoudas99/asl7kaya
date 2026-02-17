@@ -8,7 +8,7 @@
     // ─── Hero Section ──────────────────────────────────
     &__hero {
         position: relative;
-        min-height: 100vh; // Restore min-h-screen
+        min-height: 60vh; // Restore min-h-screen
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -106,6 +106,7 @@
         .gradient-text {
             background: linear-gradient(135deg, $text-white 30%, $primary-500 100%); // Subtle gradient
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
     }
@@ -120,6 +121,66 @@
 
         @include md {
             font-size: 1.5rem;
+        }
+    }
+
+    &__social-links {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    &__social-link {
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: $radius-xl;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        @include flex-center;
+        color: $text-muted;
+        text-decoration: none;
+        transition: all $transition-base;
+        backdrop-filter: blur(10px);
+
+        svg {
+            width: 1.75rem;
+            height: 1.75rem;
+        }
+
+        &:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+            color: $text-white;
+        }
+
+        &--youtube:hover {
+            color: #FF0000;
+            background: rgba(255, 0, 0, 0.1);
+            border-color: rgba(255, 0, 0, 0.2);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+        }
+
+        &--facebook:hover {
+            color: #1877F2;
+            background: rgba(24, 119, 242, 0.1);
+            border-color: rgba(24, 119, 242, 0.2);
+            box-shadow: 0 0 20px rgba(24, 119, 242, 0.2);
+        }
+
+        &--instagram:hover {
+            color: #E4405F;
+            background: rgba(228, 64, 95, 0.1);
+            border-color: rgba(228, 64, 95, 0.2);
+            box-shadow: 0 0 20px rgba(228, 64, 95, 0.2);
+        }
+
+        &--tiktok:hover {
+            color: #ff0050;
+            background: rgba(255, 0, 80, 0.1);
+            border-color: rgba(255, 0, 80, 0.2);
+            box-shadow: 0 0 20px rgba(255, 0, 80, 0.2);
         }
     }
 
@@ -149,7 +210,7 @@
         font-size: 1.125rem;
         border-radius: 1rem;
         border: 1px solid rgba(255, 255, 255, 0.1);
-          text-decoration: none;
+        text-decoration: none;
     }
 
     &__empty {
@@ -237,6 +298,122 @@
         }
     }
 
+    // ─── Trending Section ──────────────────────────────
+    &__trending {
+        @include container;
+        padding-inline: 0;
+        padding-block: 6rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+        &-header {
+            margin-bottom: 3rem;
+        }
+
+        &-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(#ff6b35, 0.1);
+            border: 1px solid rgba(#ff6b35, 0.25);
+            color: #ff6b35;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+
+            &-fire {
+                font-size: 1rem;
+            }
+        }
+
+        &-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        &-desc {
+            color: $dark-400;
+            font-size: 1.125rem;
+        }
+    }
+
+    // ─── Best Videos ───────────────────────────────────
+    &__best {
+        @include container;
+        padding-inline: 0; // Remove horizontal padding
+        padding-block: 6rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+        &-header {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+            gap: 2rem;
+            flex-wrap: wrap; // Be safe
+
+            @include sm {
+                flex-wrap: nowrap;
+            }
+        }
+
+        &-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba($primary-600, 0.1);
+            border: 1px solid rgba($primary-600, 0.2);
+            color: $primary-400;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        &-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        &-desc {
+            color: $dark-400;
+            font-size: 1.125rem;
+            max-width: 100%;
+        }
+
+        &-view-all {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: $text-white;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            background: $dark-900;
+            border-radius: 0.75rem;
+            border: 1px solid $border-subtle;
+            transition: all 0.2s;
+            white-space: nowrap;
+
+            &:hover {
+                background: $dark-800;
+                border-color: $primary-600;
+                transform: translateX(-5px);
+            }
+
+            svg {
+                width: 1.25rem;
+                height: 1.25rem;
+                transition: transform 0.2s;
+            }
+        }
+    }
+
     // ─── Latest Videos ─────────────────────────────────
     &__latest {
         padding-block: 6rem;
@@ -265,6 +442,7 @@
 
     &__videos-grid {
         @include container;
+        padding-inline: 0; // Remove horizontal padding
         display: grid;
         grid-template-columns: 1fr;
         gap: 2rem; // Wider gap like original

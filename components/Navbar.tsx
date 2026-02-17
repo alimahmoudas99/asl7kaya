@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SearchBar from './SearchBar';
+import RandomButton from './RandomButton';
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -46,6 +47,7 @@ export default function Navbar() {
                     <Link href="/" className="navbar__link">الرئيسية</Link>
                     <Link href="/about" className="navbar__link">من نحن</Link>
                     <Link href="/contact" className="navbar__link">اتصل بنا</Link>
+                    <RandomButton />
                 </div>
 
                 {/* Mobile Toggle */}
@@ -80,6 +82,9 @@ export default function Navbar() {
                     <Link href="/contact" className="navbar__mobile-link" onClick={() => setMobileMenuOpen(false)}>
                         اتصل بنا
                     </Link>
+                    <div style={{ padding: '0 1rem' }}>
+                        <RandomButton />
+                    </div>
                 </div>
             </div>
         </nav>

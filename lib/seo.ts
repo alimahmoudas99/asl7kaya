@@ -42,7 +42,7 @@ export function generateVideoMetadata(video: Video) {
     'قصص واقعية',
     'سفاح',
     'سفاح مصر',
-    'سفاح عربية', 
+    'سفاح عربية',
     'سفاح مصر',
     'سفاح عربية',
     'سفاح مصر',
@@ -73,8 +73,8 @@ export function generateVideoMetadata(video: Video) {
     'قصص جرائم عربية',
     'قصص جرائم مصر',
     'قصص جرائم عربية',
-     'القصة الكاملة', 
-     'تفاصيل القصة الكاملة',
+    'القصة الكاملة',
+    'تفاصيل القصة الكاملة',
     // Video-specific keywords
     ...(video.people_involved || []),
     ...(video.location ? [
@@ -101,13 +101,13 @@ export function generateVideoMetadata(video: Video) {
       authors: [SITE_CONFIG.author],
       images: video.thumbnail_url
         ? [
-            {
-              url: video.thumbnail_url,
-              width: 1280,
-              height: 720,
-              alt: video.title,
-            },
-          ]
+          {
+            url: video.thumbnail_url,
+            width: 1280,
+            height: 720,
+            alt: video.title,
+          },
+        ]
         : [],
     },
     twitter: {
@@ -265,7 +265,7 @@ export function generateArticleSchema(video: Video) {
 
 export function generateVideoObjectSchema(video: Video) {
   const thumbnailUrl = video.thumbnail_url || `https://img.youtube.com/vi/${video.youtube_id}/maxresdefault.jpg`;
-  
+
   return {
     '@context': 'https://schema.org',
     '@type': 'VideoObject',
@@ -350,7 +350,7 @@ export function generateVideoFAQs(video: Video): { question: string; answer: str
     },
     {
       question: `أين يمكنني مشاهدة القصة الكاملة لـ ${title}؟`,
-      answer: `يمكنك مشاهدة القصة الكاملة والتفاصيل الحصرية على قناة أصل الحكاية على يوتيوب، أو من خلال هذه الصفحة مباشرة.`,
+      answer: `يمكنك مشاهدة القصة الكاملة والتفاصيل الحصرية على يوتيوب، أو من خلال هذه الصفحة مباشرة.`,
     },
     {
       question: `ما هي حقيقة ${title}؟`,

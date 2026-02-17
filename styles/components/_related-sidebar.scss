@@ -1,0 +1,104 @@
+@use '../shared/variables' as *;
+@use '../shared/mixins' as *;
+
+.related-sidebar {
+    display: none;
+
+    @include lg {
+        display: block;
+        position: sticky;
+        top: calc($navbar-height + 2rem);
+        max-height: calc(100vh - $navbar-height - 4rem);
+        overflow-y: auto;
+
+        // Custom scrollbar
+        &::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: $dark-700;
+            border-radius: 10px;
+        }
+    }
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: $text-white;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid $border-subtle;
+
+        svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: $text-primary;
+        }
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    &__card {
+        display: flex;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        border-radius: $radius-lg;
+        text-decoration: none;
+        transition: all $transition-fast;
+        border: 1px solid transparent;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: $border-subtle;
+
+            .related-sidebar__card-title {
+                color: $text-primary;
+            }
+        }
+    }
+
+    &__card-thumb {
+        position: relative;
+        width: 5.5rem;
+        min-width: 5.5rem;
+        height: 3.5rem;
+        border-radius: $radius-sm;
+        overflow: hidden;
+        background: $dark-800;
+    }
+
+    &__card-info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+
+    &__card-title {
+        color: $text-light;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        line-height: 1.4;
+        @include line-clamp(2);
+        transition: color $transition-fast;
+    }
+
+    &__card-category {
+        color: $text-subtle;
+        font-size: 0.6875rem;
+    }
+}

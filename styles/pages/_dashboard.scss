@@ -188,10 +188,23 @@
     &__page-header {
         margin-bottom: 2rem;
 
+        &--flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            flex-wrap: nowrap; // Never wrap
+
+            &>* {
+                flex-shrink: 0; // Prevent children from compressing
+            }
+        }
+
         &-title {
             font-size: 1.5rem;
             font-weight: 700;
             color: $text-white;
+            white-space: nowrap; // Ensure title stays on one line
         }
 
         &-desc {
@@ -444,6 +457,8 @@
         cursor: pointer;
         text-decoration: none;
         transition: background $transition-base;
+        white-space: nowrap; // Force button content on one line
+        flex-shrink: 0;
 
         &:hover {
             background: $primary-500;

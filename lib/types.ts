@@ -19,6 +19,7 @@ export type Video = {
   category_id: string | null;
   is_external_only: boolean;
   views: number;
+  is_best: boolean;
   published_at: string;
   updated_at: string;
   created_at: string;

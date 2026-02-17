@@ -32,9 +32,9 @@ export default function VideosPage() {
 
     return (
         <div>
-            <div className="flex items-center justify-between mb-8">
-                <h1 className="dashboard__page-header-title">إدارة القصص</h1>
-                <Link href="/dashboard/videos/new" className="dashboard__btn-add">
+            <div className="dashboard__page-header dashboard__page-header--flex">
+                <h1 className="dashboard__page-header-title whitespace-nowrap mb-0">إدارة القصص</h1>
+                <Link href="/dashboard/videos/new" className="dashboard__btn-add whitespace-nowrap shrink-0">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>

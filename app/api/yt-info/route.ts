@@ -29,6 +29,8 @@ export async function GET(request: Request) {
             }
         });
         const html = await pageRes.text();
+        console.log('HTML Length:', html.length);
+        console.log('HTML Start:', html.substring(0, 500));
 
         // Decode HTML entities helper
         const decodeHtml = (html: string) => {
@@ -42,29 +44,64 @@ export async function GET(request: Request) {
 
         const title = oEmbedData.title || (html.match(/<title>(.*?)<\/title>/)?.[1]?.replace(' - YouTube', '') || '');
 
-        // Extract full description from ytInitialData or meta tags
+        // Extract full description from ytInitialData
         let description = '';
         const jsonMatch = html.match(/ytInitialData\s*=\s*({.*?});/);
+        console.log('ytInitialData found:', !!jsonMatch);
         if (jsonMatch) {
             try {
                 const data = JSON.parse(jsonMatch[1]);
-                // Look for description in various possible locations in the JSON
-                const videoDetails = data.contents?.twoColumnWatchNextResults?.results?.results?.contents?.[0]?.videoPrimaryInfoRenderer;
-                const descriptionText = data.engagementPanels?.find((p: any) => p.engagementPanelSectionListRenderer?.targetId === 'engagement-panel-structured-description')
-                    ?.engagementPanelSectionListRenderer?.content?.structuredDescriptionContentRenderer?.items?.[1]
-                    ?.expandableVideoDescriptionBodyRenderer?.attributedDescriptionBodyText?.content;
 
-                // Fallback to a simpler search in the JSON if the above fails
-                description = descriptionText || html.match(/"shortDescription":"(.*?)"/)?.[1]?.replace(/\\n/g, '\n').replace(/\\"/g, '"') || '';
+                // Helper to search for description in various path structures
+                const findDescription = (obj: any): string | null => {
+                    if (!obj) return null;
+
+                    // Path 1: structuredDescriptionContentRenderer (Newer UI)
+                    const structured = obj.engagementPanels?.find((p: any) =>
+                        p.engagementPanelSectionListRenderer?.targetId === 'engagement-panel-structured-description'
+                    )?.engagementPanelSectionListRenderer?.content?.structuredDescriptionContentRenderer;
+
+                    if (structured?.items) {
+                        for (const item of structured.items) {
+                            if (item.videoDescriptionHeaderRenderer) continue;
+                            const text = item.expandableVideoDescriptionBodyRenderer?.attributedDescriptionBodyText?.content ||
+                                item.videoDescriptionBodyRenderer?.attributedDescriptionBodyText?.content;
+                            if (text) return text;
+                        }
+                    }
+
+                    // Path 2: videoPrimaryInfoRenderer
+                    const primary = obj.contents?.twoColumnWatchNextResults?.results?.results?.contents?.[0]?.videoPrimaryInfoRenderer;
+                    if (primary?.description?.runs) {
+                        return primary.description.runs.map((r: any) => r.text).join('');
+                    }
+
+                    // Path 3: shortDescription (fallback within JSON)
+                    if (obj.videoDetails?.shortDescription) {
+                        return obj.videoDetails.shortDescription;
+                    }
+
+                    return null;
+                };
+
+                description = findDescription(data) || '';
+
             } catch (e) {
                 console.error('Failed to parse ytInitialData:', e);
             }
         }
 
         if (!description) {
+            // Last resort: meta tags (often truncated)
             const descMatch = html.match(/<meta name="description" content="(.*?)">/);
             description = descMatch ? decodeHtml(descMatch[1]) : '';
         }
+
+        // Clean up description: handle escaped characters and newlines
+        description = description
+            .replace(/\\n/g, '\n')
+            .replace(/\\"/g, '"')
+            .replace(/\\u0026/g, '&');
 
         // Extract keywords/tags from keywords meta tag or common locations
         const keywordsMatch = html.match(/<meta name="keywords" content="(.*?)">/);

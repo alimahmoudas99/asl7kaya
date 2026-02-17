@@ -12,6 +12,10 @@
 @use 'components/video-player';
 @use 'components/search-bar';
 @use 'components/breadcrumb';
+@use 'components/share-buttons';
+@use 'components/related-sidebar';
+@use 'components/newsletter';
+@use 'components/random-button';
 
 // ─── Pages ───────────────────────────────────────────────
 @use 'pages/home';

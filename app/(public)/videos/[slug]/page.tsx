@@ -2,12 +2,14 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import VideoPlayer from '@/components/VideoPlayer';
 import VideoCard from '@/components/VideoCard';
+import ShareButtons from '@/components/ShareButtons';
+import RelatedSidebar from '@/components/RelatedSidebar';
 import { getVideoBySlug, getRelatedVideos, incrementVideoViews } from '@/lib/queries';
+import Breadcrumb from '@/components/Breadcrumb';
 import {
     generateVideoMetadata,
     generateArticleSchema,
     generateVideoObjectSchema,
-    generateBreadcrumbSchema,
     generateFAQSchema,
     generateVideoFAQs,
     SITE_CONFIG,
@@ -62,7 +64,7 @@ export default async function VideoPage({ params }: Props) {
     await incrementVideoViews(video.id);
 
     // Get related videos
-    const relatedVideos = await getRelatedVideos(video.category_id, video.id);
+    const relatedVideos = await getRelatedVideos(video.category_id, video.id, 6);
 
     const formattedDate = new Date(video.published_at).toLocaleDateString('ar-EG', {
         year: 'numeric',
@@ -84,11 +86,10 @@ export default async function VideoPage({ params }: Props) {
     const faqItems = generateVideoFAQs(video);
     const faqSchema = generateFAQSchema(faqItems);
 
-    const breadcrumbSchema = generateBreadcrumbSchema([
-        { name: 'الرئيسية', url: SITE_CONFIG.url },
-        { name: categoryName, url: `${SITE_CONFIG.url}/category/${categorySlug}` },
-        { name: video.title, url: `${SITE_CONFIG.url}/videos/${video.slug}` },
-    ]);
+    const breadcrumbItems = [
+        ...(categoryName ? [{ name: categoryName, href: `/category/${categorySlug}` }] : []),
+        { name: video.title, href: `/videos/${video.slug}` },
+    ];
 
     const readingTime = calculateReadingTime(video.content);
 
@@ -104,36 +105,11 @@ export default async function VideoPage({ params }: Props) {
             />
             <script
                 type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-            />
-            <script
-                type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
             />
 
             <article className="video-detail__container" itemScope itemType="https://schema.org/Article">
-                <nav className="breadcrumb" aria-label="Breadcrumb">
-                    <ol className="breadcrumb__list" itemScope itemType="https://schema.org/BreadcrumbList">
-                        <li className="breadcrumb__item" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
-                            <a itemProp="item" href="/">
-                                <span itemProp="name">الرئيسية</span>
-                            </a>
-                            <meta itemProp="position" content="1" />
-                        </li>
-                        {categoryName && (
-                            <li className="breadcrumb__item" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
-                                <a itemProp="item" href={`/category/${categorySlug}`}>
-                                    <span itemProp="name">{categoryName}</span>
-                                </a>
-                                <meta itemProp="position" content="2" />
-                            </li>
-                        )}
-                        <li className="breadcrumb__item breadcrumb__item--active" itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
-                            <span itemProp="name">{video.title}</span>
-                            <meta itemProp="position" content="3" />
-                        </li>
-                    </ol>
-                </nav>
+                <Breadcrumb items={breadcrumbItems} />
 
                 <header className="mb-8">
                     {categoryName && (
@@ -180,6 +156,8 @@ export default async function VideoPage({ params }: Props) {
                     <meta itemProp="inLanguage" content="ar" />
                 </header>
 
+                <ShareButtons title={video.title} />
+
                 {/* Video Player or Redirect Thumbnail */}
                 <div className="video-detail__player">
                     {video.is_external_only ? (
@@ -210,53 +188,59 @@ export default async function VideoPage({ params }: Props) {
                         />
                     )}
                 </div>
-                <div
-                    className="article-content"
-                    itemProp="articleBody"
-                    dangerouslySetInnerHTML={{ __html: video.content }}
-                />
 
-                <section className="faq-section" style={{ marginTop: '3rem', padding: '2rem', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
-                    <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>الأسئلة الشائعة</h2>
-                    <div>
-                        {faqItems.map((faq, index) => (
-                            <div key={index} style={{ marginBottom: '1.5rem' }}>
-                                <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem', color: '#1a1a1a' }}>
-                                    {faq.question}
+                <div className="video-detail__layout">
+                    <div className="video-detail__main">
+                        <div
+                            className="article-content"
+                            itemProp="articleBody"
+                            dangerouslySetInnerHTML={{ __html: video.content }}
+                        />
+
+                        <section className="faq-section" style={{ marginTop: '3rem', padding: '2rem', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
+                            <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>الأسئلة الشائعة</h2>
+                            <div>
+                                {faqItems.map((faq, index) => (
+                                    <div key={index} style={{ marginBottom: '1.5rem' }}>
+                                        <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem', color: '#1a1a1a' }}>
+                                            {faq.question}
+                                        </h3>
+                                        <div>
+                                            <p style={{ color: '#444', lineHeight: '1.6' }}>
+                                                {faq.answer}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* People Involved (Tags) */}
+                        {video.people_involved && video.people_involved.length > 0 && (
+                            <div className="video-detail__people">
+                                <h3 className="video-detail__people-title">
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    شخصيات القصة:
                                 </h3>
-                                <div>
-                                    <p style={{ color: '#444', lineHeight: '1.6' }}>
-                                        {faq.answer}
-                                    </p>
+                                <div className="video-detail__people-list">
+                                    {video.people_involved.map((person, index) => (
+                                        <span key={index} className="video-detail__people-tag">
+                                            {person}
+                                        </span>
+                                    ))}
                                 </div>
                             </div>
-                        ))}
+                        )}
                     </div>
-                </section>
-                {/* People Involved (Tags) */}
-                {video.people_involved && video.people_involved.length > 0 && (
-                    <div className="video-detail__people">
-                        <h3 className="video-detail__people-title">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            شخصيات القصة:
-                        </h3>
-                        <div className="video-detail__people-list">
-                            {video.people_involved.map((person, index) => (
-                                <span key={index} className="video-detail__people-tag">
-                                    {person}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                )}
 
+                    <RelatedSidebar videos={relatedVideos} />
+                </div>
 
-
-                {/* Related Videos */}
+                {/* Related Videos - Mobile/Tablet (below content) */}
                 {relatedVideos.length > 0 && (
-                    <>
+                    <div className="video-detail__related-mobile">
                         <div className="video-detail__divider" />
                         <div className="video-detail__related">
                             <h2 className="video-detail__related-title">قصص ذات صلة</h2>
@@ -266,7 +250,7 @@ export default async function VideoPage({ params }: Props) {
                                 ))}
                             </div>
                         </div>
-                    </>
+                    </div>
                 )}
             </article>
         </div>

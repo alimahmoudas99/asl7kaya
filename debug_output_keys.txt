@@ -1,0 +1,12 @@
+Available Video Keys: [
+  'id',              'title',
+  'slug',            'excerpt',
+  'content',         'youtube_id',
+  'thumbnail_url',   'location',
+  'people_involved', 'category_id',
+  'published_at',    'updated_at',
+  'created_at',      'is_external_only',
+  'views',           'is_best'
+]
+Column 'excerpt' length: 163
+Column 'content' length: 160

@@ -1,0 +1,56 @@
+@use '../shared/variables' as *;
+@use '../shared/mixins' as *;
+
+.random-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: $radius-full;
+    background: rgba($primary-600, 0.1);
+    border: 1px solid rgba($primary-600, 0.2);
+    color: $text-primary;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all $transition-base;
+    white-space: nowrap;
+
+    &__icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        transition: transform 0.4s ease;
+    }
+
+    &__text {
+        @media (max-width: 767px) {
+            display: none;
+        }
+    }
+
+    &:hover {
+        background: rgba($primary-600, 0.2);
+        border-color: rgba($primary-600, 0.4);
+        color: $text-white;
+        box-shadow: 0 0 20px rgba($primary-600, 0.15);
+
+        .random-button__icon {
+            transform: rotate(180deg);
+        }
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+
+        .random-button__icon {
+            animation: spin 0.8s linear infinite;
+        }
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

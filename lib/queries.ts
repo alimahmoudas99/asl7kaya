@@ -3,6 +3,23 @@ import type { Video, Category } from './types';
 
 // ─── Videos ──────────────────────────────────────────────
 
+export async function getTrendingVideos(limit = 6) {
+    const supabase = getSupabase();
+    if (!supabase) return [];
+
+    const { data, error } = await supabase
+        .from('videos')
+        .select('*, categories(name, slug)')
+        .order('views', { ascending: false })
+        .limit(limit);
+
+    if (error) {
+        console.error('Error fetching trending videos:', error);
+        return [];
+    }
+    return (data as Video[]) || [];
+}
+
 export async function getLatestVideos(limit = 6) {
     const supabase = getSupabase();
     if (!supabase) return [];
@@ -15,6 +32,24 @@ export async function getLatestVideos(limit = 6) {
 
     if (error) {
         console.error('Error fetching latest videos:', error);
+        return [];
+    }
+    return (data as Video[]) || [];
+}
+
+export async function getBestVideos(limit = 4) {
+    const supabase = getSupabase();
+    if (!supabase) return [];
+
+    const { data, error } = await supabase
+        .from('videos')
+        .select('*, categories(name, slug)')
+        .eq('is_best', true)
+        .order('published_at', { ascending: false })
+        .limit(limit);
+
+    if (error) {
+        console.error('Error fetching best videos:', error);
         return [];
     }
     return (data as Video[]) || [];

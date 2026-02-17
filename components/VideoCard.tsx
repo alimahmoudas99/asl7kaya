@@ -51,6 +51,8 @@ export default function VideoCard({ video }: { video: Video }) {
                         className="video-card__thumbnail-img"
                         style={{ objectFit: 'cover' }}
                         loading="lazy"
+                        placeholder="blur"
+                        blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTYiIGhlaWdodD0iOSIgZmlsbD0iIzExMTgyNyIvPjwvc3ZnPg=="
                     />
                     <div className="video-card__thumbnail-overlay" />
 
